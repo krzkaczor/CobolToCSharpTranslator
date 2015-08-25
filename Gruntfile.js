@@ -31,6 +31,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask("build", ['clean', "babel", "copy:main"]);
+    grunt.registerTask("fast-build", ["babel", "copy:main"]);
 
     grunt.registerTask("serve", ["build", "execute"]);
 };

@@ -26,4 +26,6 @@ parser.yy = {
 
 
 var helloWorldSample = fs.readFileSync(path.join(SAMPLES_PATH, 'helloworld.cob')).toString();
-parser.parse(helloWorldSample);
+var compilationUnit = parser.parse(helloWorldSample);
+
+console.log(compilationUnit);

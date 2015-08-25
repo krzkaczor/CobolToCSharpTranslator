@@ -12,21 +12,22 @@ compilation-unit
 identification-division
     :   IDENTIFICATION DIVISION DOT
         program-id DOT
-        { $$ = 'abc'; }
+        { $$ = $4}
     ;
 
 program-id
-    :   PROGRAM-ID DOT ID
+    :   PROGRAM-ID DOT ID { $$ = {id: $3};}
     ;
 
 procedure-division
     :   PROCEDURE DIVISION DOT
         paragraphs
+        { $$ = $4 }
     ;
 
 paragraphs
-    :   paragraphs paragraph
-    |   paragraph
+    :   paragraphs paragraph                            { $$.push(new Paragraph($2)); }
+    |   paragraph                                       { $$ = [new Paragraph($1)]; }
     ;
 
 paragraph
