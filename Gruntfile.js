@@ -7,9 +7,12 @@ module.exports = function(grunt) {
                 sourceMap: true
             },
             dist: {
-                files: {
-                    "dist/app.js": "src/app.js"
-                }
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['**/*.js'],
+                    dest: 'dist/'
+                }]
             }
         },
         execute: {
@@ -20,16 +23,14 @@ module.exports = function(grunt) {
         copy: {
             main: {
                 files: [
-                    // includes files within path
                     {expand: true, cwd: 'src/', src: ['cobol/grammar/*'], dest: 'dist/'}
                 ]
             }
         },
+        clean: ["dist/"]
     });
 
-    grunt.registerTask("default", ["babel"]);
-
-    grunt.registerTask("build", ["babel", "copy:main"]);
+    grunt.registerTask("build", ['clean', "babel", "copy:main"]);
 
     grunt.registerTask("serve", ["build", "execute"]);
 };

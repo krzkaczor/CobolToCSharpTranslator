@@ -6,11 +6,13 @@ compilation-unit
     :	identification-division
         procedure-division
         EOF
+        { $$ = new CompilationUnit($1, $2); return $$; }
     ;
 
 identification-division
     :   IDENTIFICATION DIVISION DOT
         program-id DOT
+        { $$ = 'abc'; }
     ;
 
 program-id
