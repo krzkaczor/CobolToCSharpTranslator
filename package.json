@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "edge": "^0.10.1",
     "jison": "^0.4.15",
     "lodash": "^3.10.1"
   },
