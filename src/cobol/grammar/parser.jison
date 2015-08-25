@@ -43,11 +43,11 @@ statement
     ;
 
 display-stat
-    :   DISPLAY literal
+    :   DISPLAY literal                                 { $$ = new DisplayVerb($2); }
     ;
 
 literal
-	:	string_literal
+	:	string_literal                                  { $$ = new StringLiteral($1); }
 	;
 
 string_literal

@@ -4,7 +4,7 @@ module.exports = class Paragraph extends Base {
 
     constructor(stats) {
         super();
-        this.statemenets = stats;
+        this.statements = stats;
     }
 
 };
