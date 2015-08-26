@@ -1,3 +1,5 @@
+require('./utils');
+
 var fs = require('fs');
 var path = require('path');
 var jison = require('jison');
@@ -28,4 +30,8 @@ parser.yy = {
 var helloWorldSample = fs.readFileSync(path.join(SAMPLES_PATH, 'helloworld.cob')).toString();
 var compilationUnit = parser.parse(helloWorldSample);
 
-console.log(require('util').inspect(compilationUnit, true, 10));
+//console.log(require('util').inspect(compilationUnit, true, 10));
+
+var csharpEmitter = require('./csharp/emitCSharp');
+
+console.log(compilationUnit.emitCSharp());

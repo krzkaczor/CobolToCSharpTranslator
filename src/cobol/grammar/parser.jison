@@ -22,7 +22,7 @@ program-id
 procedure-division
     :   PROCEDURE DIVISION DOT
         paragraphs
-        { $$ = $4 }
+        { $$ = new ProcedureDivision($4); }
     ;
 
 paragraphs
@@ -31,11 +31,12 @@ paragraphs
     ;
 
 paragraph
-    :	sentence* DOT
+    :   statements DOT
     ;
 
-sentence
-    :   statement
+statements
+    :   statement                                       { $$ = [$1]; }
+    |	statements statement                            { $$ = $1.push($2); }
     ;
 
 statement
