@@ -1,27 +1,27 @@
 var cobolNodes = require('../cobol/nodes');
 var csharpNodes = require('./nodes');
 
-csharpNodes.CompilationUnit.prototype.toCSharp = function () {
-    return new csharpNodes.CompilationUnit(['System'], this.procedureDivision.toCSharp());
+cobolNodes.CompilationUnit.prototype.toCSharp = function () {
+    return new csharpNodes.CompilationUnit(['System'], [this.procedureDivision.toCSharp()]);
 };
 
-csharpNodes.ProcedureDivision.prototype.toCSharp = function () {
-    var MainMethod = new csharpNodes.MethodMember('main', true, this.paragraphs[0].toCSharp(true));
-    return new csharpNodes.ClassDeclaration('Main class', [MainMethod]);
+cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
+    var MainMethod = this.paragraphs[0].toCSharp(true);
+    return new csharpNodes.ClassDeclaration('Runner', [MainMethod]);
 };
 
-csharpNodes.Paragraph.prototype.toCSharp = function (asMain) {
+cobolNodes.Paragraph.prototype.toCSharp = function (asMain) {
     if (asMain) {
-        return new csharpNodes.MethodMember('main', true, this.statements.map.toCSharp(true));
+        return new csharpNodes.MethodMember('Main', this.statements.map(stat => stat.toCSharp(true)), true);
     } else {
         assert(false);
     }
 };
 
-csharpNodes.DisplayVerb.prototype.toCSharp = function() {
-    return new MethodInvokeExpression('Console', 'WriteLine', [this.what.toCSharp()]);
+cobolNodes.DisplayVerb.prototype.toCSharp = function() {
+    return new csharpNodes.MethodInvokeExpression('Console', 'WriteLine', [this.what.toCSharp()]);
 };
 
-csharpNodes.StringLiteral.prototype.toCSharp = function() {
-    return new PrimitiveExpression('"{0}"'.format(this.value));
+cobolNodes.StringLiteral.prototype.toCSharp = function() {
+    return new csharpNodes.PrimitiveExpression('"{0}"'.format(this.value));
 };

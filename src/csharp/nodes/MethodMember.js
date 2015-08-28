@@ -9,6 +9,6 @@ module.exports = class MethodMember extends Base {
     }
 
     toSource() {
-        return '{0}void {1}() {\n{2}}\n'.format(this.isStatic? 'static ': '', this.name, this.stats.map(s=>s.toSource()).reduce((a,b) => a+ b, ""));
+        return '{0}void {1}() {\n{2}}\n'.format(this.isStatic? 'static ': '', this.name, this.stats.map(s=>s.toSource()).reduce((a,b) => b  + '\n' + a, ""));
     }
 };

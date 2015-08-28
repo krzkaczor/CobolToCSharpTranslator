@@ -16,7 +16,7 @@ describe('Hello World Program', function () {
 
     it('should print the same output', function (done) {
         var cobolProgram = loadCobolProgram(TESTED_PROGRAM);
-        var translatedProgram = cobolToCSharpTranslator.emitCSharp(cobolProgram);
+        var translatedProgram = cobolToCSharpTranslator.getCSharpCode(cobolProgram);
 
         var cobolResultPromise = runCobol(TESTED_PROGRAM);
         var cSharpResultPromise = runCSharp.fromString(translatedProgram);

@@ -5,6 +5,7 @@ var path = require('path');
 var jison = require('jison');
 var nodes = require('./cobol/nodes');
 var csharpEmitter = require('./csharp/emitCSharp');
+var csharpTransformer = require('./csharp/cobolNodesToCSharpNodesTransformer');
 
 const GRAMMAR_PATH = path.join(__dirname, 'cobol/grammar');
 
@@ -29,12 +30,15 @@ module.exports = class CobolToCSharpTranslator {
         };
     }
 
-    getAST(input) {
+    getCobolAst(input) {
         return this.parser.parse(input);
     }
 
-    emitCSharp(input) {
-        var ast = this.getAST(input);
-        return ast.emitCSharp();
+    getCSharpAst(input) {
+        return this.getCobolAst(input).toCSharp();
+    }
+
+    getCSharpCode(input) {
+        return this.getCSharpAst(input).toSource();
     }
 };
