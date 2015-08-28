@@ -20,7 +20,7 @@ nodes.ProcedureDivision.prototype.emitCSharp = function () {
 };
 
 nodes.Paragraph.prototype.emitCSharp = function () {
-    return this.statements.map(stat => stat.emitCSharp() + '\n');
+    return this.statements.map(stat => stat.emitCSharp() + '\n').reduce((a, b) => a+b, "");
 };
 
 nodes.DisplayVerb.prototype.emitCSharp = function() {

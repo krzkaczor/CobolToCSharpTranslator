@@ -26,8 +26,8 @@ procedure-division
     ;
 
 paragraphs
-    :   paragraphs paragraph                            { $$.push(new Paragraph($2)); }
-    |   paragraph                                       { $$ = [new Paragraph($1)]; }
+    :   paragraph                                       { $$ = [new Paragraph($1)]; }
+    |   paragraphs paragraph                            { $$.push(new Paragraph($2)); }
     ;
 
 paragraph
@@ -36,7 +36,7 @@ paragraph
 
 statements
     :   statement                                       { $$ = [$1]; }
-    |	statements statement                            { $$ = $1.push($2); }
+    |	statements statement                            { $$.push($2); }
     ;
 
 statement
