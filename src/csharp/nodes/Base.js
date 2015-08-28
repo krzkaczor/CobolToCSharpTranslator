@@ -2,7 +2,7 @@ var _ =  require('lodash');
 
 module.exports = class Base {
     constructor() {
-        this.TYPE = "cobol." + this.constructor.name;
+        this.TYPE = "csharp." + this.constructor.name;
     }
 
     bindWithParent(child) {
@@ -15,5 +15,9 @@ module.exports = class Base {
         }
 
         return child;
+    }
+
+    toSource() {
+        throw new Error('unimplemented');
     }
 };
