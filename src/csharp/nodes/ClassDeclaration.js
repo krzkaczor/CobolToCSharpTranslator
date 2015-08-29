@@ -1,4 +1,5 @@
 var Base = require('./Base');
+var code = require('code-gen');
 
 module.exports = class ClassDeclaration extends Base {
     constructor(name, members) {
@@ -8,6 +9,12 @@ module.exports = class ClassDeclaration extends Base {
     }
 
     toSource() {
-        return "class {0} {\n{1}}\n".format(this.name, this.members.map(member => member.toSource()).reduce((a, b) => a+b, ""));
+        return [
+            code.inline([
+                code.for('class'),
+                code.for(this.name)
+            ]),
+            code.inCurlyBrackets(code.for(this.members).withNewLine())
+        ];
     }
 };

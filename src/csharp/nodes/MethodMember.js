@@ -1,4 +1,5 @@
 var Base = require('./Base');
+var code = require('code-gen');
 
 module.exports = class MethodMember extends Base {
     constructor(name, stats, isStatic) {
@@ -9,6 +10,14 @@ module.exports = class MethodMember extends Base {
     }
 
     toSource() {
-        return '{0}void {1}() {\n{2}}\n'.format(this.isStatic? 'static ': '', this.name, this.stats.map(s=>s.toSource()).reduce((a,b) => b  + '\n' + a, ""));
+        return [
+            code.inline([
+                code.for('static').if(this.isStatic),
+                code.for('void'),
+                code.for(this.name)
+            ]),
+            code.inBrackets(code.for('')), //tofix
+            code.inCurlyBrackets(code.for(this.stats).withNewLine())
+        ];
     }
 };

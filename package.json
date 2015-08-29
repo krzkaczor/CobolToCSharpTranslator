@@ -25,6 +25,7 @@
     "grunt-execute": "^0.2.2",
     "load-grunt-tasks": "^3.2.0",
     "mocha": "^2.2.5",
-    "node-csharp": "https://github.com/krzkaczor/node-csharp"
+    "node-csharp": "https://github.com/krzkaczor/node-csharp",
+    "code-gen": "https://github.com/krzkaczor/CodeGen"
   }
 }

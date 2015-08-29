@@ -1,4 +1,5 @@
 var Base = require('./Base');
+var code = require('code-gen');
 
 module.exports = class PrimitiveExpression extends Base {
 
@@ -11,6 +12,6 @@ module.exports = class PrimitiveExpression extends Base {
     }
 
     toSource() {
-        return this.primitive;
+        return code.for(this.primitive);
     }
 };

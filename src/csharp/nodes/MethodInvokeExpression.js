@@ -1,4 +1,5 @@
 var Base = require('./Base');
+var code = require('code-gen');
 
 module.exports = class MethodInvokeExpression extends Base {
     /**
@@ -15,6 +16,11 @@ module.exports = class MethodInvokeExpression extends Base {
     }
 
     toSource() {
-        return '{0}.{1}({2});'.format(this.referencedType, this.methodName, this.args.map(arg => arg.toSource()));
+        return [
+            code.for(this.referencedType),
+            code.for('.'),
+            code.for(this.methodName),
+            code.inBrackets(code.for(this.args).commaSeparated()).endingWith(';')
+        ];
     }
 };

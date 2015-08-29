@@ -1,4 +1,5 @@
 var Base = require('./Base');
+var code = require('code-gen');
 
 module.exports = class CompilationUnit extends Base {
     /**
@@ -12,9 +13,14 @@ module.exports = class CompilationUnit extends Base {
     }
 
     toSource() {
-        var code = "";
-        code += this.dependencies.map(dep => "using {0};\n".format(dep)).reduce((a, b) => a + b, "");
-        code += this.topLevelDeclarations.map(decl => decl.toSource()).reduce((a, b) => a + b, "");
-        return code;
+        var res = code.for([
+            code.for(this.dependencies).withTemplate('using {0};').withNewLine(),
+            code.for(this.topLevelDeclarations).withNewLine()
+        ]).withNewLine();
+
+        debugger;
+
+        return res.compile();
+
     }
 };
