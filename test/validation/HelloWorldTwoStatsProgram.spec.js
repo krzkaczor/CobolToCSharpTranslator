@@ -27,6 +27,7 @@ describe('Hello World Two Stats Program', function () {
             expect(cobolResult).to.be.equal(cSharpResult);
             done();
         }).catch(res => {
+            console.log(translatedProgram);
             console.log(res);
             assert.fail();
             done();

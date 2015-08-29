@@ -28,6 +28,7 @@ describe('Hello World Program', function () {
 
             done();
         }).catch(err => {
+            console.log(translatedProgram);
             console.log(err);
             assert.fail(err);
         });
