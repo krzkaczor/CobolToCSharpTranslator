@@ -12,9 +12,8 @@ module.exports = class CompilationUnit extends Base {
     }
 
     toSource() {
-        var code = "";
-        code += this.dependencies.map(dep => "using {0};\n".format(dep)).reduce((a, b) => a + b, "");
-        code += this.topLevelDeclarations.map(decl => decl.toSource()).reduce((a, b) => a + b, "");
+        var code = this.dependencies.map(dep => "using {0};\n".format(dep)).join('');
+        code += this.allToSource(this.topLevelDeclarations).join('');
         return code;
     }
 };

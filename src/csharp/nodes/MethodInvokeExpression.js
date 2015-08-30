@@ -15,6 +15,10 @@ module.exports = class MethodInvokeExpression extends Base {
     }
 
     toSource() {
-        return '{0}.{1}({2});'.format(this.referencedType, this.methodName, this.args.map(arg => arg.toSource()));
+        return '{0}.{1}({2});'.format(
+            this.referencedType,
+            this.methodName,
+            this.allToSource(this.args)
+        );
     }
 };

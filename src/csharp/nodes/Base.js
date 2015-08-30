@@ -20,4 +20,8 @@ module.exports = class Base {
     toSource() {
         throw new Error('unimplemented');
     }
+
+    allToSource(arr) {
+        return arr.map(decl => decl.toSource());
+    }
 };
