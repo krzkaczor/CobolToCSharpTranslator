@@ -1,8 +1,8 @@
 var Base = require('./Base');
 
 module.exports = class ProcedureDivision extends Base {
-    constructor(paragraphs) {
+    constructor(sections) {
         super();
-        this.paragraphs = paragraphs;
+        this.sections = sections;
     }
 };

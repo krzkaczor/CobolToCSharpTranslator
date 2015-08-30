@@ -5,7 +5,7 @@ var CobolToCSharpTranslator = require('./CobolToCSharpTranslator');
 
 const SAMPLES_PATH = path.join(__dirname, '../samples/');
 
-var cobolProgram = fs.readFileSync(path.join(SAMPLES_PATH, 'helloworld.cob')).toString();
+var cobolProgram = fs.readFileSync(path.join(SAMPLES_PATH, 'sectionsHelloWorld.cob')).toString();
 
 var cobolAst = new CobolToCSharpTranslator().getCobolAst(cobolProgram);
 var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);

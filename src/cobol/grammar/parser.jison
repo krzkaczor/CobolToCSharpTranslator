@@ -21,8 +21,23 @@ program-id
 
 procedure-division
     :   PROCEDURE DIVISION DOT
-        paragraphs
+        sections
         { $$ = new ProcedureDivision($4); }
+
+    |   PROCEDURE DIVISION DOT
+        paragraphs
+        { $$ = new ProcedureDivision([new Section($4)]); }
+    ;
+
+sections
+    :   section                                         { $$ = [$1]; }
+    |   sections section                                { $$.push($1); }
+    ;
+
+section:
+    ID SECTION DOT
+    paragraphs
+    { $$ = new Section($4, $1); }
     ;
 
 paragraphs

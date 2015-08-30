@@ -1,13 +1,22 @@
+var _ = require('lodash');
+
 var cobolNodes = require('../cobol/nodes');
 var csharpNodes = require('./nodes');
 
+var allToCSharp = function(arr) {
+    return arr.map(e => e.toCSharp());
+};
+
 cobolNodes.CompilationUnit.prototype.toCSharp = function () {
-    return new csharpNodes.CompilationUnit(['System'], [this.procedureDivision.toCSharp()]);
+    return new csharpNodes.CompilationUnit(['System'], this.procedureDivision.toCSharp());
 };
 
 cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
-    var MainMethod = this.paragraphs[0].toCSharp(true);
-    return new csharpNodes.ClassDeclaration('Runner', [MainMethod]);
+    return allToCSharp(this.sections);
+};
+
+cobolNodes.Section.prototype.toCSharp = function() {
+    return new csharpNodes.ClassDeclaration(this.name, [_.head(this.paragraphs).toCSharp(true)].concat(allToCSharp(_.tail(this.paragraphs))));
 };
 
 cobolNodes.Paragraph.prototype.toCSharp = function (asMain) {

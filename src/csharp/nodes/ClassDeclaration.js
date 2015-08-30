@@ -3,6 +3,11 @@ var Base = require('./Base');
 module.exports = class ClassDeclaration extends Base {
     constructor(name, members) {
         super();
+
+        if (name == 'Main') {
+            name = 'MainCls';
+        }
+
         this.name = name;
         this.members = members;
     }

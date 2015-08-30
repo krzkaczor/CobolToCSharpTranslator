@@ -13,6 +13,7 @@
 'PROGRAM-ID'          return 'PROGRAM-ID';
 
 'PROCEDURE'           return 'PROCEDURE';
+'SECTION'             return 'SECTION';
 
 /* verbs */
 'DISPLAY'             return 'DISPLAY';
