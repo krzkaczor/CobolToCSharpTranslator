@@ -8,8 +8,9 @@ const SAMPLES_PATH = path.join(__dirname, '../samples/');
 var cobolProgram = fs.readFileSync(path.join(SAMPLES_PATH, 'sectionsHelloWorld.cob')).toString();
 
 var cobolAst = new CobolToCSharpTranslator().getCobolAst(cobolProgram);
-var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);
+console.log(require('util').inspect(cobolAst, true, 10));
 
+var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);
 console.log(require('util').inspect(csharpAst, true, 10));
 
 console.log(csharpAst.toSource());

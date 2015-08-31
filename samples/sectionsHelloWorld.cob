@@ -1,5 +1,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. HELLOWORLD.
        PROCEDURE DIVISION.
-       Main SECTION.
+       Runner SECTION.
+       DISPLAY "HELLO WORLD".
+       DISPLAY "HELLO WORLD".
+       Greeting.
        DISPLAY "HELLO WORLD".
