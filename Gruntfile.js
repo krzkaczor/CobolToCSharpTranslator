@@ -15,6 +15,16 @@ module.exports = function(grunt) {
                 }]
             }
         },
+        shell: {
+            antlr: {
+                options: {
+                    execOptions: {
+                        cwd: 'src/cobol/grammar/'
+                    }
+                },
+                command: 'java -Xmx500M -cp "/usr/local/lib/antlr-4.5-complete.jar:$CLASSPATH" org.antlr.v4.Tool -Dlanguage=JavaScript -o ../../../dist/cobol/parser/ Cobol85.g4 -visitor'
+            }
+        },
         execute: {
             target: {
                 src: ['dist/app.js']
@@ -30,8 +40,8 @@ module.exports = function(grunt) {
         clean: ["dist/"]
     });
 
-    grunt.registerTask("build", ['clean', "babel", "copy:main"]);
-    grunt.registerTask("fast-build", ["babel", "copy:main"]);
+    grunt.registerTask("build", ['clean', "babel", "copy:main", "shell:antlr"]);
+    grunt.registerTask("fast-build", ["babel", "copy:main", "shell:antlr"]);
 
     grunt.registerTask("serve", ["build", "execute"]);
 };
