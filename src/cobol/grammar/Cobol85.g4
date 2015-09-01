@@ -17,6 +17,7 @@ programId
 
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT
+		sentence*
 		sections
 	;
 
@@ -25,8 +26,8 @@ sections
 	;
 
 section
-	:	sentence*
-		ID 'SECTION' DOT
+	:	ID 'SECTION' DOT
+		sentence*
 		paragraphs
 	;
 
@@ -48,22 +49,26 @@ statement
 	;
 
 displayStat
-	:	'DISPLAY' LITERAL
+	:	'DISPLAY' literal
 	;
 
-LITERAL
-	:	STRING_LITERAL
-	|   NUMERIC_LITERAL
+literal
+	:	stringLiteral
+	|   numericLiteral
 	;
 
-STRING_LITERAL
-	:   QUOTE [a-zA-Z0-9 ]* QUOTE
-	|   APOSTR [a-zA-Z0-9 ]* APOSTR
+stringLiteral
+	:   STRING
 	;
 
-NUMERIC_LITERAL: [0-9]+ ;
+
+numericLiteral: NUMBER ;
 
 ID : [a-zA-Z0-9]+;
+
+STRING : QUOTE [a-zA-Z0-9 ]+ QUOTE;
+
+NUMBER : [0-9]+;
 
 DOT : '.';
 

@@ -1,8 +1,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. HELLOWORLD.
        PROCEDURE DIVISION.
+       DISPLAY "HELLO WORLD".
+       DISPLAY "DUPA DUPA".
        Runner SECTION.
-       DISPLAY "HELLO WORLD".
-       DISPLAY "HELLO WORLD".
+       DISPLAY "Section sen1 stat1"
+       DISPLAY "section sen1 stat2".
        Greeting.
-       DISPLAY "HELLO WORLD".
+       DISPLAY "PAR #1".
