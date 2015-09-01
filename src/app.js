@@ -10,8 +10,8 @@ var cobolProgram = fs.readFileSync(path.join(SAMPLES_PATH, 'sectionsHelloWorld.c
 var cobolAst = new CobolToCSharpTranslator().getCobolAst(cobolProgram);
 console.log(require('util').inspect(cobolAst, true, 10));
 
-var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);
-console.log(require('util').inspect(csharpAst, true, 10));
-
-console.log(csharpAst.toSource());
-//console.log(new CobolToCSharpTranslator().emitCSharp(cobolProgram));
+//var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);
+//console.log(require('util').inspect(csharpAst, true, 10));
+//
+//console.log(csharpAst.toSource());
+////console.log(new CobolToCSharpTranslator().emitCSharp(cobolProgram));
