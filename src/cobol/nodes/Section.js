@@ -4,10 +4,11 @@ var Base = require('./Base');
 const DEFAULT_SECTION_NAME = 'Runner';
 
 module.exports = class Section extends Base {
-    constructor(paragraphs, name) {
+    constructor(name, freeSentences, paragraphs) {
         super();
+        this.name = name;
+        this.freeSentences = freeSentences;
         this.paragraphs = paragraphs;
-        this.name = name || DEFAULT_SECTION_NAME;
     }
 
     isRunner() {

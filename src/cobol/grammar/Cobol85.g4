@@ -18,21 +18,13 @@ programId
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT
 		sentence*
-		sections
-	;
-
-sections
-	:	section*
+		section*
 	;
 
 section
 	:	ID 'SECTION' DOT
 		sentence*
-		paragraphs
-	;
-
-paragraphs
-	:	paragraph*
+		paragraph*
 	;
 
 paragraph
