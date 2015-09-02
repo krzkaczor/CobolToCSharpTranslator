@@ -17,5 +17,22 @@ module.exports = class Section extends Base {
     fillSymbolTable() {
          this.paragraphs.forEach(par => this.symbolTable.set(par.name, par));
     }
+
+    unshiftParagraph(par) {
+        this.paragraphs.unshift(par);
+        this.symbolTable.set(par.name, par);
+
+        return this;
+    }
+
+    /**
+     * This could be moved to rewriter
+     */
+    renameParagraph(par, newName) {
+        this.symbolTable.rename(par.name, newName);
+        par.name = newName;
+
+        return this;
+    }
 };
 

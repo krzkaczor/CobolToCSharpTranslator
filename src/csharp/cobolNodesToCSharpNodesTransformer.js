@@ -23,7 +23,7 @@ cobolNodes.Paragraph.prototype.toCSharp = function () {
     //flatten all sentences into one big array of C# statements
     var stats = _.flatten(this.sentences.map(sent => sent.statements));
 
-    return new csharpNodes.MethodMember('Main', allToCSharp(stats), true);
+    return new csharpNodes.MethodMember(this.name, allToCSharp(stats), true);
 };
 
 cobolNodes.GoToVerb.prototype.toCSharp = function() {

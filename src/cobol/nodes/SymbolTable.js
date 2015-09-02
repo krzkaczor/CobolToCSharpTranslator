@@ -22,4 +22,14 @@ module.exports = class SymbolTable {
 
         return value;
     }
+
+    rename(oldKey, newKey) {
+        var value = this.get(oldKey);
+        delete this.data['oldKey'];
+        this.set(newKey, value);
+    }
+
+    contains(key) {
+        return _.has(this.data, key);
+    }
 }
