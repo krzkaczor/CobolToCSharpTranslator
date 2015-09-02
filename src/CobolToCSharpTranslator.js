@@ -28,6 +28,11 @@ module.exports = class CobolToCSharpTranslator {
 
         var cobolAstMapper = new CobolAstMapper();
         var astCobol = cobolAstMapper.visit(tree);
+
+        //complete AST
+        astCobol.bindWithParent();
+        astCobol.act('analyze');
+
         return astCobol;
     }
 

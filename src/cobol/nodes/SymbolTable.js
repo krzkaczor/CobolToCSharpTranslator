@@ -6,7 +6,7 @@ module.exports = class SymbolTable {
     }
 
     set(key, value) {
-        if (!_.isUndefined(this.data[key])) {
+        if (_.has(this.data, key)) {
             throw new Error('Symbol does already exist');
         }
 

@@ -26,6 +26,10 @@ cobolNodes.Paragraph.prototype.toCSharp = function () {
     return new csharpNodes.MethodMember('Main', allToCSharp(stats), true);
 };
 
+cobolNodes.GoToVerb.prototype.toCSharp = function() {
+    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), []); //thanks to memoization we WILL get the same translated object
+};
+
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {
     return new csharpNodes.MethodInvokeExpression('Console', 'WriteLine', [this.what.toCSharp()]);
 };

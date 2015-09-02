@@ -10,12 +10,12 @@ module.exports = class Section extends Base {
         this.name = name;
         this.freeSentences = freeSentences;
         this.paragraphs = paragraphs;
-        this.symbols = new SymbolTable();
+        this.symbolTable = new SymbolTable();
         this.fillSymbolTable();
     }
 
     fillSymbolTable() {
-         this.paragraphs.forEach(par => this.symbols.set(par.name, par));
+         this.paragraphs.forEach(par => this.symbolTable.set(par.name, par));
     }
 };
 

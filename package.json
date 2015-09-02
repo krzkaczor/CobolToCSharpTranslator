@@ -12,6 +12,7 @@
     "edge": "^0.10.1",
     "jison": "^0.4.15",
     "lodash": "^3.10.1",
+    "memoizee": "^0.3.9",
     "q": "^1.4.1"
   },
   "devDependencies": {

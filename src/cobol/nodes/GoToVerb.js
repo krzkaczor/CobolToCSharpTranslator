@@ -5,4 +5,8 @@ module.exports = class GoToVerb extends Base {
         super();
         this.targetName = targetName;
     }
+
+    analyze(ctx) {
+        this.target = ctx.symbolTable.get(this.targetName);
+    }
 };

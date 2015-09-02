@@ -4,6 +4,6 @@ module.exports = class CompilationUnit extends Base {
     constructor(identificationData, procedureDivision) {
         super();
         this.identificationData = identificationData;
-        this.procedureDivision = super.bindWithParent(procedureDivision);
+        this.procedureDivision = procedureDivision;
     }
 };
