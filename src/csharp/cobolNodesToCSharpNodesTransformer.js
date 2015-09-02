@@ -16,15 +16,14 @@ cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
 };
 
 cobolNodes.Section.prototype.toCSharp = function() {
-    return new csharpNodes.ClassDeclaration(this.name, [_.head(this.paragraphs).toCSharp(true)].concat(allToCSharp(_.tail(this.paragraphs))));
+    return new csharpNodes.ClassDeclaration(this.name, allToCSharp(this.paragraphs));
 };
 
-cobolNodes.Paragraph.prototype.toCSharp = function (asMain) {
-    if (asMain) {
-        return new csharpNodes.MethodMember('Main', this.statements.map(stat => stat.toCSharp(true)), true);
-    } else {
-        assert(false);
-    }
+cobolNodes.Paragraph.prototype.toCSharp = function () {
+    //flatten all sentences into one big array of C# statements
+    var stats = _.flatten(this.sentences.map(sent => sent.statements));
+
+    return new csharpNodes.MethodMember('Main', allToCSharp(stats), true);
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {

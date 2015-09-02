@@ -31,8 +31,17 @@ module.exports = class CobolToCSharpTranslator {
         return astCobol;
     }
 
+    getCobolAstAndRewrite(input) {
+        var ast = this.getCobolAst(input);
+
+        var rewrites = [require('./cobol/rewriters/createRunnerSection').bind(undefined, 'Runner')];
+        var rewrittenAst = rewrites.reduce((ast, rewriter) => rewriter(ast), ast);
+
+        return rewrittenAst;
+    }
+
     getCSharpAst(input) {
-        return this.getCobolAst(input).toCSharp();
+        return this.getCobolAstAndRewrite(input).toCSharp();
     }
 
     getCSharpCode(input) {

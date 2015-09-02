@@ -27,7 +27,7 @@ describe('Hello World Program', function () {
             expect(cobolResult).to.be.equal(cSharpResult);
 
             done();
-        }).catch(err => {
+        }).catch(function(err) {
             console.log(err);
             assert.fail(err);
         });

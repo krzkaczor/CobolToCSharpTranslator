@@ -19,10 +19,13 @@ module.exports = function(runnerSectionName, compilationUnit) {
 
         var uniqueNewName = utils.makeUniqueInSet(conflictingSection.name, allSectionsNames);
 
-        debugger;
         //TODO: it should be properly renamed!
         conflictingSection.name = uniqueNewName;
     }
 
-    compilationUnit.procedureDivision.sections.unshift(new nodes.Section('Runner'));
+    var runner = new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main', compilationUnit.procedureDivision.freeSentences)]);
+    compilationUnit.procedureDivision.freeSentences = undefined;
+    compilationUnit.procedureDivision.sections.unshift(runner);
+
+    return compilationUnit;
 };
