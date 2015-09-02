@@ -38,6 +38,11 @@ sentence
 
 statement
 	:	displayStat
+	|   goToStat
+	;
+
+goToStat
+	:	'GO' 'TO' ID
 	;
 
 displayStat

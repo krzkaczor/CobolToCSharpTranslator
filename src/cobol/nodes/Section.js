@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var Base = require('./Base');
+var SymbolTable = require('./SymbolTable');
 
 const DEFAULT_SECTION_NAME = 'Runner';
 
@@ -9,9 +10,12 @@ module.exports = class Section extends Base {
         this.name = name;
         this.freeSentences = freeSentences;
         this.paragraphs = paragraphs;
+        this.symbols = new SymbolTable();
+        this.fillSymbolTable();
     }
 
-    isRunner() {
-        return _.isUndefined(this.name);
+    fillSymbolTable() {
+         this.paragraphs.forEach(par => this.symbols.set(par.name, par));
     }
 };
+

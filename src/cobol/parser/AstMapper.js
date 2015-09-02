@@ -61,6 +61,10 @@ module.exports = class AstMapper extends CobolVisitor {
         return new nodes.Sentence(this.visit(ctx.statement()));
     }
 
+    visitGoToStat(ctx) {
+        return new nodes.GoToVerb(ctx.ID().getText());
+    }
+
     visitDisplayStat(ctx) {
         return new nodes.DisplayVerb(this.visit(ctx.literal()));
     }
