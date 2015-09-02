@@ -5,6 +5,8 @@ module.exports = class Base {
     constructor() {
         this.TYPE = "cobol." + this.constructor.name;
 
+
+        //TODO: cobol classes should not know about c# 
         if (this.toCSharp) {
             this.toCSharp = memoize(this.toCSharp.bind(this));
         }
