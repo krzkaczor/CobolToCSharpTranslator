@@ -10,8 +10,9 @@
                   DISPLAY "PAR 1".
 
        Section2 SECTION.
-              GO TO Par2.
+              PERFORM Par1.
               DISPLAY "ABC".
+              GO TO Par2.
               Par1.
                   DISPLAY "PAR 2".
               Par2.

@@ -34,6 +34,10 @@ cobolNodes.GoToVerb.prototype.toCSharp = function() {
     return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), ['true']); //thanks to memoization we WILL get the same translated object
 };
 
+cobolNodes.PerformVerb.prototype.toCSharp = function() {
+    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), ['false']); //thanks to memoization we WILL get the same translated object
+};
+
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {
     return new csharpNodes.MethodInvokeExpression('Console.WriteLine', [this.what.toCSharp()]);
 };

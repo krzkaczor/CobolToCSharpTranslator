@@ -40,6 +40,7 @@ sentence
 statement
 	:	displayStat
 	|   goToStat
+	|   performStat
 	|   stopRunStat
 	;
 
@@ -49,6 +50,10 @@ stopRunStat
 
 goToStat
 	:	'GO' 'TO' ID
+	;
+
+performStat
+	:	'PERFORM' ID
 	;
 
 displayStat
