@@ -12,6 +12,6 @@ module.exports = class PrimitiveExpression extends Base {
     }
 
     toSource() {
-        return code.for(this.primitive);
+        return `${this.primitive}`;
     }
 };
