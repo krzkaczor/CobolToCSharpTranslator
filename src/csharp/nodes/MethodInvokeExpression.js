@@ -1,24 +1,23 @@
+var _ = require('lodash');
 var Base = require('./Base');
 
 module.exports = class MethodInvokeExpression extends Base {
     /**
      *
-     * @param referencedType {string}
-     * @param methodName {string}
+     * @param reference {string}
      * @param args {Array}
      */
-    constructor(referencedType, methodName, args) {
+    constructor(reference, args) {
         super();
-        this.referencedType = referencedType;
-        this.methodName = methodName;
+        this.reference = reference;
         this.args = args;
     }
 
     toSource() {
-        return '{0}.{1}({2});'.format(
-            this.referencedType,
-            this.methodName,
-            this.allToSource(this.args)
-        );
+        if (_.isString(this.reference)) {
+            return `${this.reference}(${this.allToSource(this.args)});`;
+        } else {
+            return `${this.reference.name}(${this.allToSource(this.args)});`;
+        }
     }
 };

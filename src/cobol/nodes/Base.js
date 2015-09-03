@@ -34,12 +34,12 @@ module.exports = class Base {
 
     /**
      * Try running given function recursively
-     * @param {String} functionName
+     * @param {function | String} func
      */
-    act(functionName, data) {
+    act(func, data) {
         var fireOnlyOnChildren = (element) => {
             if (element instanceof Base) {
-                element.act(functionName, data);
+                element.act(func, data);
             }
         };
 
@@ -49,8 +49,10 @@ module.exports = class Base {
             data.symbolTable = this.symbolTable;
         }
 
-        if (this[functionName]) {
-            this[functionName](data);
+        if (this[func]) {
+            this[func](data);
+        } else if(_.isFunction(func)) {
+            func.apply(this, data);
         }
 
         //call recursively

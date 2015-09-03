@@ -31,7 +31,7 @@ cobolNodes.GoToVerb.prototype.toCSharp = function() {
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression('Console', 'WriteLine', [this.what.toCSharp()]);
+    return new csharpNodes.MethodInvokeExpression('Console.WriteLine', [this.what.toCSharp()]);
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function() {
