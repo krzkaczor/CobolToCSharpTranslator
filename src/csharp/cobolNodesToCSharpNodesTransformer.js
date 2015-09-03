@@ -26,8 +26,12 @@ cobolNodes.Paragraph.prototype.toCSharp = function () {
     return new csharpNodes.MethodMember(this.name, allToCSharp(stats), true);
 };
 
+cobolNodes.StopRunVerb.prototype.toCSharp = function() {
+    return new csharpNodes.MethodInvokeExpression('System.Environment.Exit', ['0']);
+};
+
 cobolNodes.GoToVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), []); //thanks to memoization we WILL get the same translated object
+    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), ['true']); //thanks to memoization we WILL get the same translated object
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {

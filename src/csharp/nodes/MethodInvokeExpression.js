@@ -9,15 +9,15 @@ module.exports = class MethodInvokeExpression extends Base {
      */
     constructor(reference, args) {
         super();
-        this.reference = reference;
+        this._reference = reference;
         this.args = args;
     }
 
     toSource() {
-        if (_.isString(this.reference)) {
-            return `${this.reference}(${this.allToSource(this.args)});`;
+        if (_.isString(this._reference)) {
+            return `${this._reference}(${this.allToSource(this.args)});`;
         } else {
-            return `${this.reference.name}(${this.allToSource(this.args)});`;
+            return `${this._reference._parent.name}.${this._reference.name}(${this.allToSource(this.args)});`;
         }
     }
 };

@@ -5,16 +5,24 @@ module.exports = class Base {
         this.TYPE = "csharp." + this.constructor.name;
     }
 
-    bindWithParent(child) {
-        if (_.isArray(child)) {
-            child.forEach( c => this.bindWithParent(c));
-        }
+    bindWithParent(parent) {
+        var bindBaseElement = (element) => {
+            if (element instanceof Base) {
+                element.bindWithParent(this);
+            }
+        };
 
-        if (child instanceof Base) {
-            child.parent = this;
-        }
+        _.pairs(this).filter(kv=> !_.startsWith(kv[0], '_')).map(kv => kv[1]).forEach(element => {
+            if (_.isArray(element)) {
+                element.forEach(bindBaseElement);
+            } else {
+                bindBaseElement(element);
+            }
+        });
 
-        return child;
+        if (parent) {
+            this._parent = parent;
+        }
     }
 
     toSource() {
@@ -22,6 +30,6 @@ module.exports = class Base {
     }
 
     allToSource(arr) {
-        return arr.map(decl => decl.toSource());
+        return arr.map(decl => decl.toSource?decl.toSource(): decl);
     }
 };

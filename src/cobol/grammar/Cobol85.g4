@@ -40,6 +40,11 @@ sentence
 statement
 	:	displayStat
 	|   goToStat
+	|   stopRunStat
+	;
+
+stopRunStat
+	:	'STOP' 'RUN'
 	;
 
 goToStat

@@ -16,3 +16,4 @@
                   DISPLAY "PAR 2".
               Par2.
               DISPLAY "PAR 3".
+              STOP RUN.

@@ -50,7 +50,10 @@ module.exports = class CobolToCSharpTranslator {
     }
 
     getCSharpAst(input) {
-        return this.getCobolAstAndRewrite(input).toCSharp();
+        var cSharpAst = this.getCobolAstAndRewrite(input).toCSharp();
+        cSharpAst.bindWithParent();
+
+        return cSharpAst;
     }
 
     getCSharpCode(input) {
