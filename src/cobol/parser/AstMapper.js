@@ -37,9 +37,10 @@ module.exports = class AstMapper extends CobolVisitor {
 
     visitProcedureDivision(ctx) {
         var freeSentences = this.visit(ctx.sentence());
+        var freeParagraphs = this.visit(ctx.paragraph());
         var sections = this.visit(ctx.section());
 
-        return new nodes.ProcedureDivision(freeSentences, sections);
+        return new nodes.ProcedureDivision(freeSentences, freeParagraphs, sections);
     }
 
     visitSection(ctx) {

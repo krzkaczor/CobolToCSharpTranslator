@@ -23,8 +23,14 @@ module.exports = function(runnerSectionName, compilationUnit) {
         conflictingSection.name = uniqueNewName;
     }
 
-    var runner = new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main', compilationUnit.procedureDivision.freeSentences)]);
+    var paragraphs = [new nodes.Paragraph('Main', compilationUnit.procedureDivision.freeSentences)];
+    if (compilationUnit.procedureDivision.freeParagraphs) {
+        paragraphs = paragraphs.concat(compilationUnit.procedureDivision.freeParagraphs);
+    }
+    var runner = new nodes.Section('Runner', undefined, paragraphs);
+
     compilationUnit.procedureDivision.freeSentences = undefined;
+    compilationUnit.procedureDivision.freeParagraphs = undefined;
     compilationUnit.procedureDivision.sections.unshift(runner);
 
     return compilationUnit;

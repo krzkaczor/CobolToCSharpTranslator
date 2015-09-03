@@ -12,4 +12,5 @@ exports.purge = function (element) {
     element.act(function() {
         delete this.toCSharp;
     });
+    return element;
 };

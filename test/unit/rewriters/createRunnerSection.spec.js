@@ -14,10 +14,12 @@ describe('Create runner section rewriter', function () {
         };
 
         var freeSentences = [new nodes.Sentence([new nodes.DisplayVerb(new nodes.StringLiteral('abc'))])];
+        var freeParagraph = [new nodes.Paragraph('Test', [new nodes.Sentence([new nodes.DisplayVerb(new nodes.StringLiteral('def'))])])];
 
         var cobolProgram = {
             procedureDivision: {
                 freeSentences: freeSentences,
+                freeParagraphs: freeParagraph,
                 sections: [
                     otherSection
                 ]
@@ -26,7 +28,7 @@ describe('Create runner section rewriter', function () {
 
         createRunnerSectionRewritter('Runner', cobolProgram);
 
-        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main', freeSentences)])));
+        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main', freeSentences), freeParagraph[0]])));
         expect(cobolProgram.procedureDivision.sections[1]).to.be.eql(otherSection);
     });
 

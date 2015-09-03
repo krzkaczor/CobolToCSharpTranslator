@@ -18,6 +18,7 @@ programId
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT
 		sentence*
+		paragraph*
 		section*
 	;
 
