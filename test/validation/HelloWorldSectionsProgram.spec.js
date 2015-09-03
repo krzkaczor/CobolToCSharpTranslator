@@ -11,8 +11,8 @@ var runCobol = ValidationTestHelpers.runCobol;
 var CobolToCSharpTranslator = require('../../dist/CobolToCSharpTranslator'); //@FIX
 var cobolToCSharpTranslator = new CobolToCSharpTranslator();
 
-describe('Hello World Program', function () {
-    const TESTED_PROGRAM = 'helloworld.cob';
+describe('Hello World Sections Program', function () {
+    const TESTED_PROGRAM = 'sectionsHelloWorld.cob';
 
     it('should print the same output', function (done) {
         var cobolProgram = loadCobolProgram(TESTED_PROGRAM);
@@ -25,11 +25,11 @@ describe('Hello World Program', function () {
             var cobolResult = ValidationTestHelpers.normalizeCobolOutput(res[0]);
             var cSharpResult = res[1];
             expect(cobolResult).to.be.equal(cSharpResult);
-
             done();
-        }).catch(function(err) {
-            console.log(err);
-            assert.fail(err);
+        }).catch(function(res) {
+            console.log(res);
+            assert.fail();
+            done();
         });
     });
 });

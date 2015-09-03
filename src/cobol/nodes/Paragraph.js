@@ -1,10 +1,10 @@
 var Base = require('./Base');
 
 module.exports = class Paragraph extends Base {
-
-    constructor(stats) {
+    constructor(name, sentences) {
         super();
-        this.statements = stats;
+        this.name = name;
+        this.sentences = sentences;
     }
 
 };

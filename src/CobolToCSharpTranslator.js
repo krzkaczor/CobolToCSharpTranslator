@@ -2,40 +2,58 @@ require('./utils');
 
 var fs = require('fs');
 var path = require('path');
-var jison = require('jison');
-var nodes = require('./cobol/nodes');
-var csharpEmitter = require('./csharp/emitCSharp');
 var csharpTransformer = require('./csharp/cobolNodesToCSharpNodesTransformer');
 
-const GRAMMAR_PATH = path.join(__dirname, 'cobol/grammar');
+//const PARSER_PATH = path.join(__dirname, 'cobol/grammar');
+
+var antlr4 = require('antlr4');
+var Cobol85Lexer = require('./cobol/parser/Cobol85Lexer').Cobol85Lexer;
+var Cobol85Parser = require('./cobol/parser/Cobol85Parser').Cobol85Parser;
+var Cobol85Visitor = require('./cobol/parser/Cobol85Visitor').Cobol85Visitor;
+var visitorWrapper = require('./cobol/parser/VisitorWrapper');
+
+var CobolAstMapper = require('./cobol/parser/AstMapper');
 
 module.exports = class CobolToCSharpTranslator {
-    combineGrammar() {
-        var lexer  = fs.readFileSync(path.join(GRAMMAR_PATH, 'lexer.jisonlex'), 'utf8');
-        var parser = fs.readFileSync(path.join(GRAMMAR_PATH, 'parser.jison'), 'utf8');
-
-        //alter rules to match actual data structure
-        //lexer = lexer.replace(/return[ ]?o[ ]?\(/g, "return yy.lexerHelper.call(this,");
-        parser = parser.replace(/new[ ]+([.a-zA-Z])?/g, "new yy.nodes.$1");
-
-        return lexer + parser;
-    }
-
     constructor() {
-        var grammar = this.combineGrammar();
-        this.parser = new jison.Parser(grammar);
-
-        this.parser.yy = {
-            nodes: nodes
-        };
     }
 
     getCobolAst(input) {
-        return this.parser.parse(input);
+        var chars = new antlr4.InputStream(input);
+        var lexer = new Cobol85Lexer(chars);
+        var tokens  = new antlr4.CommonTokenStream(lexer);
+        var parser = new Cobol85Parser(tokens);
+        parser.buildParseTrees = true;
+        var tree = parser.compilationUnit();
+
+        var cobolAstMapper = new CobolAstMapper();
+        var astCobol = cobolAstMapper.visit(tree);
+
+        //complete AST
+        astCobol.bindWithParent();
+        astCobol.act('analyze');
+
+        return astCobol;
+    }
+
+    getCobolAstAndRewrite(input) {
+        var ast = this.getCobolAst(input);
+
+        var rewrites = [
+            require('./cobol/rewriters/createRunnerSection').bind(undefined, 'Runner'),
+            require('./cobol/rewriters/moveFreeStatementsToParagraph').bind(undefined, 'main'),
+        ];
+
+        var rewrittenAst = rewrites.reduce((ast, rewriter) => rewriter(ast), ast);
+
+        return rewrittenAst;
     }
 
     getCSharpAst(input) {
-        return this.getCobolAst(input).toCSharp();
+        var cSharpAst = this.getCobolAstAndRewrite(input).toCSharp();
+        cSharpAst.bindWithParent();
+
+        return cSharpAst;
     }
 
     getCSharpCode(input) {

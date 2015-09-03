@@ -1,5 +1,5 @@
+var _ = require('lodash');
 var Base = require('./Base');
-var code = require('code-gen');
 
 module.exports = class CompilationUnit extends Base {
     /**
@@ -13,14 +13,12 @@ module.exports = class CompilationUnit extends Base {
     }
 
     toSource() {
-        var res = code.for([
-            code.for(this.dependencies).withTemplate('using {0};').withNewLine(),
-            code.for(this.topLevelDeclarations).withNewLine()
-        ]).withNewLine();
+        var code = this.dependencies.map(dep => "using {0};\n".format(dep)).join('');
+        code += this.allToSource(this.topLevelDeclarations).join('');
+        return code;
+    }
 
-        debugger;
-
-        return res.compile();
-
+    getNextClass(decl) {
+        return this.topLevelDeclarations[_.findIndex(this.topLevelDeclarations, d => d=== decl) + 1];
     }
 };
