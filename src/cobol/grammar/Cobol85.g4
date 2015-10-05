@@ -57,7 +57,8 @@ performStat
 	;
 
 displayStat
-	:	'DISPLAY' literal
+	:	'DISPLAY' literal #advancing
+	|   'DISPLAY' literal 'WITH NO ADVANCING'? #noadvancing
 	;
 
 literal

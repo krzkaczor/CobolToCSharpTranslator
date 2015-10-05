@@ -74,7 +74,13 @@ module.exports = class AstMapper extends CobolVisitor {
     }
 
     visitDisplayStat(ctx) {
-        return new nodes.DisplayVerb(this.visit(ctx.literal()));
+        //should be refactored when ANTLR-JS supports this feature (i guess that i need to submit PR by myself xD)
+        var label = ctx.constructor.name;
+
+        var advancing = label === "AdvancingContext";
+        var displayVerb = new nodes.DisplayVerb(this.visit(ctx.literal()), advancing);
+
+        return displayVerb;
     }
 
     visitStringLiteral(ctx) {
