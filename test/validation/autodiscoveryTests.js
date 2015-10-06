@@ -15,7 +15,9 @@ var cobolToCSharpTranslator = new CobolToCSharpTranslator();
 
 const VALIDATION_TESTS_DIR = path.join(__dirname, '..', '..', 'samples');
 
-const ignoredFiles = ['basicData.cob'];
+const ignoredFiles = ['basicData.cob', 'nextFeature.cob', 'Accept.cob'];
+
+//const runOnly = ['Shortest.cob'];
 
 autodiscoverDir(VALIDATION_TESTS_DIR);
 
@@ -40,6 +42,10 @@ function autodiscoverDir(dir) {
 }
 
 function makeTest(file, fullPath) {
+    if (typeof runOnly !== 'undefined' && !_.isEmpty(runOnly) && !_.contains(runOnly, file)) {
+        return;
+    }
+
     describe(file + ' tests:', function () {
         it('should print the same output', function (done) {
             var cobolProgram = loadCobolProgram(fullPath);
@@ -51,6 +57,7 @@ function makeTest(file, fullPath) {
             Q.all([cobolResultPromise, cSharpResultPromise]).then(function (res) {
                 var cobolResult = ValidationTestHelpers.normalizeCobolOutput(res[0]);
                 var cSharpResult = res[1];
+
                 expect(cobolResult).to.be.equal(cSharpResult);
 
                 done();

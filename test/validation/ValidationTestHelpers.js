@@ -9,20 +9,21 @@ var COBOL_SAMPLES = join(__dirname, '..', '..', 'samples');
 var loadCobolProgram = function(fullPath) {
     var source = fs.readFileSync(fullPath).toString();
 
-    //some examples contain unnecessary lines like setting env variables (?)
+    //some examples contain unnecessary lines like setting env variables (?) comming from Microfocus
     //we will delete them here
-    source = source.replace('      $ SET SOURCEFORMAT"FREE"\n', ''); //maybe it should be more generic like all lines begining with $
-
+    source = source.replace('      $ SET SOURCEFORMAT"FREE"\n', ''); //maybe it should be more generic like all lines beginning with $
 
     return source;
 };
 
 var runCobol = function(fullPath) {
-    var opts = ['-free'];
+    var opts = {
+        free: true
+    };
 
     return Q.Promise(function(resolve, reject) {
         var cobolProgram= loadCobolProgram(fullPath);
-        console.log(cobolProgram);
+
         Cobol(cobolProgram, opts, function (err, data) {
             if (!err) {
                 resolve(data);
