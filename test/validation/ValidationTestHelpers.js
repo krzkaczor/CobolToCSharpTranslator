@@ -6,13 +6,24 @@ var Cobol = require('cobol');
 
 var COBOL_SAMPLES = join(__dirname, '..', '..', 'samples');
 
-exports.loadCobolProgram = function(name) {
-    return fs.readFileSync(join(COBOL_SAMPLES, name)).toString()
+var loadCobolProgram = function(fullPath) {
+    var source = fs.readFileSync(fullPath).toString();
+
+    //some examples contain unnecessary lines like setting env variables (?)
+    //we will delete them here
+    source = source.replace('      $ SET SOURCEFORMAT"FREE"\n', ''); //maybe it should be more generic like all lines begining with $
+
+
+    return source;
 };
 
-exports.runCobol = function(name, opts) {
+var runCobol = function(fullPath) {
+    var opts = ['-free'];
+
     return Q.Promise(function(resolve, reject) {
-        Cobol(join(COBOL_SAMPLES, name), opts, function (err, data) {
+        var cobolProgram= loadCobolProgram(fullPath);
+        console.log(cobolProgram);
+        Cobol(cobolProgram, opts, function (err, data) {
             if (!err) {
                 resolve(data);
             } else {
@@ -22,6 +33,13 @@ exports.runCobol = function(name, opts) {
     });
 };
 
-exports.normalizeCobolOutput = function(output) {
+var normalizeCobolOutput = function(output) {
   return output + "\n";
 };
+
+
+module.exports = {
+    loadCobolProgram: loadCobolProgram,
+    runCobol: runCobol,
+    normalizeCobolOutput: normalizeCobolOutput
+}
