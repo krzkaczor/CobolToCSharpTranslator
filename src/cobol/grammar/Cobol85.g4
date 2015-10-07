@@ -23,7 +23,7 @@ dataDivision
 
 workingStorageSection
 	:	'WORKING-STORAGE' 'SECTION' DOT
-	    NUMBER ID DOT
+	 	variableDeclaration*
 	;
 
 variableDeclaration
@@ -37,20 +37,16 @@ elementaryItem
 		NUMBER ID picture DOT
 	;
 
+/*TO BE FIX - WE NEED TO IMPLEMENT CONDITIONAL LEXING*/
 picture
-	:	'PIC' pictureType*                    #verbosePicture
-	|   'PIC' pictureType '(' NUMBER ')'      #numberPicture
-	;
-
-pictureType
-	:	'9'
-	|   'X'
+	:	'PIC' (ID|NUMBER)                     #verbosePicture
+	|   'PIC' (ID|NUMBER) '(' NUMBER ')'      #numberPicture
 	;
 
 groupItem
 	:
 		NUMBER ID DOT
-		variableDeclaration*
+		variableDeclaration+
 	;
 
 
