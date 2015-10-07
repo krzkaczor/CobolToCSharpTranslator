@@ -2,6 +2,7 @@ grammar Cobol85;
 
 compilationUnit
 	:	identificationDivision
+		dataDivision?
 		procedureDivision
 		EOF
 	;
@@ -14,6 +15,44 @@ identificationDivision
 programId
 	:	'PROGRAM-ID.' ID
 	;
+
+dataDivision
+	:	'DATA' 'DIVISION' DOT
+		workingStorageSection
+	;
+
+workingStorageSection
+	:	'WORKING-STORAGE' 'SECTION' DOT
+	    NUMBER ID DOT
+	;
+
+variableDeclaration
+	:
+		elementaryItem
+	|   groupItem
+	;
+
+elementaryItem
+	:
+		NUMBER ID picture DOT
+	;
+
+picture
+	:	'PIC' pictureType*                    #verbosePicture
+	|   'PIC' pictureType '(' NUMBER ')'      #numberPicture
+	;
+
+pictureType
+	:	'9'
+	|   'X'
+	;
+
+groupItem
+	:
+		NUMBER ID DOT
+		variableDeclaration*
+	;
+
 
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT
@@ -73,11 +112,11 @@ stringLiteral
 
 numericLiteral: NUMBER ;
 
+NUMBER : [0-9]+;
+
 ID : [a-zA-Z0-9]+;
 
 STRING : QUOTE [a-zA-Z0-9 ]+ QUOTE;
-
-NUMBER : [0-9]+;
 
 DOT : '.';
 
@@ -88,3 +127,4 @@ APOSTR : '\'';
 WS
 	:	(' ' | '\r' | '\n' ) -> channel(HIDDEN)
 	;
+
