@@ -31,11 +31,14 @@ cobolNodes.StopRunVerb.prototype.toCSharp = function() {
 };
 
 cobolNodes.GoToVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), ['true']); //thanks to memoization we WILL get the same translated object
+    //thanks to memoization we WILL get the same translated object
+    var invokeExpr = new csharpNodes.MethodInvokeExpression(this.target.toCSharp());
+    invokeExpr.goTo = true;
+    return invokeExpr;
 };
 
 cobolNodes.PerformVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp(), ['false']); //thanks to memoization we WILL get the same translated object
+    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp()); //thanks to memoization we WILL get the same translated object
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {

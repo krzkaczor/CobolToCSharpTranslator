@@ -5,7 +5,7 @@ var nodes = require('../nodes');
 
 /**
  * Creates runner section
- * if it exitsts and it's first then it does nothing
+ * if it exists and it's first then it does nothing
  * otherwise it renames it
  * @param {string} runnerSectionName
  * @param {CompilationUnit} compilationUnit

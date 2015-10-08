@@ -14,13 +14,17 @@ module.exports = class ClassDeclaration extends Base {
     }
 
     getNextMember(member) {
-        var nextMethod =  this.members[_.findIndex(this.members, mem => mem === member) + 1];
+        var applicableMethods = this.members.filter(mem => !mem._shadow);
+        var nextMethod =  applicableMethods[_.findIndex(applicableMethods, mem => mem === member) + 1];
+
         if (nextMethod === undefined) {
             if(this._parent.getNextClass(this) === undefined) {
                 return;
             }
+
             nextMethod = this._parent.getNextClass(this).getFirstMember();
         }
+
         return nextMethod;
     }
 

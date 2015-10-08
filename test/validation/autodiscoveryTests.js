@@ -51,7 +51,7 @@ function makeTest(file, fullPath) {
             var cobolProgram = loadCobolProgram(fullPath);
             var translatedProgram = cobolToCSharpTranslator.getCSharpCode(cobolProgram);
 
-            var cobolResultPromise = runCobol(fullPath);
+            var cobolResultPromise = runCobol(cobolToCSharpTranslator.preprocessInput(cobolProgram));
             var cSharpResultPromise = runCSharp.fromString(translatedProgram);
 
             Q.all([cobolResultPromise, cSharpResultPromise]).then(function (res) {
@@ -60,6 +60,7 @@ function makeTest(file, fullPath) {
 
                 expect(cobolResult).to.be.equal(cSharpResult);
 
+                console.log("Test run successfully\n");
                 done();
             }).catch(function (err) {
                 console.log(err);

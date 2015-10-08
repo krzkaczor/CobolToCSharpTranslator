@@ -1,4 +1,5 @@
-require('./utils');
+require('babel-core/polyfill');
+require('./polyfills');
 
 var fs = require('fs');
 var path = require('path');
@@ -14,11 +15,40 @@ var visitorWrapper = require('./cobol/parser/VisitorWrapper');
 
 var CobolAstMapper = require('./cobol/parser/AstMapper');
 
+function loadPreprocessor(name) {
+    return require(`./cobol/preprocessors/${name}`);
+}
+
+function loadCobolRewritter(name) {
+    return require(`./cobol/rewriters/${name}`);
+}
+
+function loadCSharpRewritter(name) {
+    return require(`./csharp/rewriters/${name}`);
+}
+
 module.exports = class CobolToCSharpTranslator {
     constructor() {
+        this.preprocessors = [loadPreprocessor('removeMicrofocusDirectives')];
+
+        this.cobolRewritters = [
+            loadCobolRewritter('createRunnerSection').bind(undefined, 'Runner'),
+            loadCobolRewritter('moveFreeStatementsToParagraph').bind(undefined, 'main')
+        ];
+
+        this.cSharpRewritters = [
+            loadCSharpRewritter('createCompanionMethods')
+        ];
+
+        this.postprocessor = []; //TODO: inject here postprocessor to deal with code formating of csharp code
+    }
+
+    preprocessInput(input) {
+        return this.preprocessors.reduce((input, preprocessor) => preprocessor(input), input);
     }
 
     getCobolAst(input) {
+        input = this.preprocessInput(input);
         var chars = new antlr4.InputStream(input);
         var lexer = new Cobol85Lexer(chars);
         var tokens  = new antlr4.CommonTokenStream(lexer);
@@ -39,21 +69,18 @@ module.exports = class CobolToCSharpTranslator {
     getCobolAstAndRewrite(input) {
         var ast = this.getCobolAst(input);
 
-        var rewrites = [
-            require('./cobol/rewriters/createRunnerSection').bind(undefined, 'Runner'),
-            require('./cobol/rewriters/moveFreeStatementsToParagraph').bind(undefined, 'main'),
-        ];
-
-        var rewrittenAst = rewrites.reduce((ast, rewriter) => rewriter(ast), ast);
+        var rewrittenAst = this.cobolRewritters.reduce((ast, rewriter) => rewriter(ast), ast);
 
         return rewrittenAst;
     }
 
     getCSharpAst(input) {
-        var cSharpAst = this.getCobolAstAndRewrite(input).toCSharp();
-        cSharpAst.bindWithParent();
+        var ast = this.getCobolAstAndRewrite(input).toCSharp();
+        ast.bindWithParent(); //TODO: it can be rewritter
 
-        return cSharpAst;
+        var rewrittenAst = this.cSharpRewritters.reduce((ast, rewriter) => rewriter(ast), ast);
+
+        return rewrittenAst;
     }
 
     getCSharpCode(input) {
