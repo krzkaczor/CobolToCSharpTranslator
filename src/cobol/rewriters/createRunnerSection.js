@@ -27,10 +27,10 @@ module.exports = function(runnerSectionName, compilationUnit) {
     if (compilationUnit.procedureDivision.freeParagraphs) {
         paragraphs = paragraphs.concat(compilationUnit.procedureDivision.freeParagraphs);
     }
-    var runner = new nodes.Section('Runner', undefined, paragraphs);
+    var runner = new nodes.Section('Runner', [], paragraphs);
 
-    compilationUnit.procedureDivision.freeSentences = undefined;
-    compilationUnit.procedureDivision.freeParagraphs = undefined;
+    compilationUnit.procedureDivision.freeSentences = [];
+    compilationUnit.procedureDivision.freeParagraphs = [];
     compilationUnit.procedureDivision.sections.unshift(runner);
 
     return compilationUnit;

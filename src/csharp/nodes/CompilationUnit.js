@@ -2,11 +2,7 @@ var _ = require('lodash');
 var Base = require('./Base');
 
 module.exports = class CompilationUnit extends Base {
-    /**
-     * @param dependencies {Array} - array of dependencies (using ...)
-     * @param topLevelDeclarations {Array} - top level declarations like classes, interfaces etc
-     */
-    constructor(dependencies, topLevelDeclarations) {
+    constructor(dependencies: Array<string>, topLevelDeclarations: Array<Base>) {
         super();
         this.dependencies = dependencies;
         this.topLevelDeclarations = topLevelDeclarations;

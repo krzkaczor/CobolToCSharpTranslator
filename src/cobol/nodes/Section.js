@@ -1,11 +1,12 @@
 var _ = require('lodash');
 var Base = require('./Base');
+var Paragraph = require('./Paragraph');
 var SymbolTable = require('./SymbolTable');
 
 const DEFAULT_SECTION_NAME = 'Runner';
 
 module.exports = class Section extends Base {
-    constructor(name, freeSentences, paragraphs) {
+    constructor(name: string, freeSentences: Array<Base>, paragraphs: Array<Paragraph>) {
         super();
         this.name = name;
         this.freeSentences = freeSentences;

@@ -12,7 +12,7 @@ module.exports = function (mainParagraphName, compilationUnit) {
     var sections = compilationUnit.procedureDivision.sections;
 
     sections.forEach(section => {
-        if (section.freeSentences === undefined) {
+        if (_.isEmpty(section.freeSentences)) {
             return;
         }
 
@@ -26,7 +26,7 @@ module.exports = function (mainParagraphName, compilationUnit) {
         }
 
         var mainParagraph = new nodes.Paragraph(mainParagraphName, section.freeSentences);
-        section.freeSentences = undefined;
+        section.freeSentences = [];
         section.unshiftParagraph(mainParagraph);
     });
 

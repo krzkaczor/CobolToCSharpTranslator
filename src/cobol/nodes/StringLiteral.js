@@ -1,7 +1,7 @@
 var Base = require('./Base');
 
 module.exports = class StringLiteral extends Base {
-    constructor(value) {
+    constructor(value: string) {
         super();
         this.value = value;
     }

@@ -2,11 +2,7 @@ var _ = require('lodash');
 var Base = require('./Base');
 
 module.exports = class MethodInvokeExpression extends Base {
-    /**
-     * @param {string | object} reference
-     * @param {Array?} args
-     */
-    constructor(reference, args) {
+    constructor(reference : string|Base, args: ?Array<Base>) {
         super();
         this._reference = reference;
         this.args = args || [];

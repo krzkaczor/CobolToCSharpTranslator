@@ -4,7 +4,7 @@ var MethodInvokeExpression = require('./MethodInvokeExpression');
 var assert = require('assert');
 
 module.exports = class MethodMember extends Base {
-    constructor(name, stats, isStatic) {
+    constructor(name: string, stats: Array<Base>, isStatic: ?boolean) {
         super();
         this.name = name;
         this.stats = stats;

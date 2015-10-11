@@ -4,7 +4,8 @@ module.exports = function(grunt) {
     grunt.initConfig({
         "babel": {
             options: {
-                sourceMap: true
+                sourceMap: true,
+                "plugins": ["typecheck"]
             },
             dist: {
                 files: [{

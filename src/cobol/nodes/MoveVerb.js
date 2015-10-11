@@ -1,9 +1,9 @@
 var Base = require('./Base');
 
 module.exports = class MoveVerb extends Base {
-    constructor(where, what) {
+    constructor(target: string, value: Base) {
         super();
-        this.where = where;
-        this.what = what;
+        this.where = target;
+        this.what = value;
     }
 };

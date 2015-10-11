@@ -28,7 +28,7 @@ describe('Create runner section rewriter', function () {
 
         createRunnerSectionRewritter('Runner', cobolProgram);
 
-        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main', freeSentences), freeParagraph[0]])));
+        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', [], [new nodes.Paragraph('Main', freeSentences), freeParagraph[0]])));
         expect(cobolProgram.procedureDivision.sections[1]).to.be.eql(otherSection);
     });
 
@@ -41,13 +41,15 @@ describe('Create runner section rewriter', function () {
             procedureDivision: {
                 sections: [
                     otherSection
-                ]
+                ],
+                freeParagraphs: [],
+                freeSentences: []
             }
         };
 
         createRunnerSectionRewritter('Runner', cobolProgram);
 
-        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main')])));
+        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', [], [new nodes.Paragraph('Main', [])])));
         expect(cobolProgram.procedureDivision.sections[1]).to.be.eql({name: '_Runner'});
     });
 
@@ -61,13 +63,15 @@ describe('Create runner section rewriter', function () {
                     {
                         name: '_Runner'
                     }
-                ]
+                ],
+                freeParagraphs: [],
+                freeSentences: []
             }
         };
 
         createRunnerSectionRewritter('Runner', cobolProgram);
 
-        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', undefined, [new nodes.Paragraph('Main')])));
+        expect(purge(cobolProgram.procedureDivision.sections[0])).to.be.eql(purge(new nodes.Section('Runner', [], [new nodes.Paragraph('Main', [])])));
         expect(cobolProgram.procedureDivision.sections[1]).to.be.eql({name: '__Runner'});
     });
 });
