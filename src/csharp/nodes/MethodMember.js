@@ -4,11 +4,11 @@ var MethodInvokeExpression = require('./MethodInvokeExpression');
 var assert = require('assert');
 
 module.exports = class MethodMember extends Base {
-    constructor(name: string, stats: Array<Base>, isStatic: ?boolean) {
+    constructor(name: string, stats: Array<Base>, isStatic: ?boolean = false) {
         super();
         this.name = name;
         this.stats = stats;
-        this.isStatic = isStatic || false;
+        this.isStatic = isStatic;
     }
 
     isMain() {
