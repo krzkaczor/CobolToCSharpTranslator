@@ -4,6 +4,6 @@ module.exports = class DisplayVerb extends Base {
     constructor(what, advancing) {
         super();
         this.what = what;
-        this.advancing = advancing;
+        this.advancing = advancing || false;
     }
 };

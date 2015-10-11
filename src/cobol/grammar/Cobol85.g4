@@ -77,10 +77,15 @@ statement
 	|   goToStat
 	|   performStat
 	|   stopRunStat
+	|   moveStat
 	;
 
 stopRunStat
 	:	'STOP' 'RUN'
+	;
+
+moveStat
+	:	'MOVE' literal 'TO' ID
 	;
 
 goToStat
@@ -92,8 +97,13 @@ performStat
 	;
 
 displayStat
-	:	'DISPLAY' literal #advancing
-	|   'DISPLAY' literal 'WITH NO ADVANCING'? #noadvancing
+	:	'DISPLAY' expr #advancingDisplayStat
+	|   'DISPLAY' expr 'WITH NO ADVANCING'? #noAdvancingDisplayStat
+	;
+
+expr
+	:	literal #literalExpr
+	| 	ID #symbolExpr
 	;
 
 literal
