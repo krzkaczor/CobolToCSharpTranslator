@@ -57,6 +57,10 @@ module.exports = class AstMapper extends CobolVisitor {
         return new nodes.Paragraph(name, sentences);
     }
 
+    visitSymbolExpr(ctx) {
+        return new nodes.SymbolExpression(ctx.ID().getText());
+    }
+
     visitSentence(ctx) {
         return new nodes.Sentence(this.visit(ctx.statement()));
     }
@@ -74,7 +78,7 @@ module.exports = class AstMapper extends CobolVisitor {
     }
 
     visitMoveStat(ctx) {
-        //return new nodes.MoveVerb(ctx.)
+        return new nodes.MoveVerb(ctx.ID().getText(), this.visit(ctx.literal()));
     }
 
     visitAdvancingDisplayStat(ctx) {
@@ -89,5 +93,9 @@ module.exports = class AstMapper extends CobolVisitor {
         //toFIX - grammar should be tweeked stringLiteral: QUOTE STRING QUOTE
         var text = ctx.getText();
         return new nodes.StringLiteral(text.substr(1, text.length-2));
+    }
+
+    visitNumericLiteral(ctx) {
+        return new nodes.IntLiteral(ctx.getText());
     }
 };

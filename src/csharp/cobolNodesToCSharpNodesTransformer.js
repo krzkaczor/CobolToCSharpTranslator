@@ -49,3 +49,15 @@ cobolNodes.DisplayVerb.prototype.toCSharp = function() {
 cobolNodes.StringLiteral.prototype.toCSharp = function() {
     return new csharpNodes.PrimitiveExpression('"{0}"'.format(this.value));
 };
+
+cobolNodes.IntLiteral.prototype.toCSharp = function() {
+    return new csharpNodes.PrimitiveExpression('{0}'.format(this.value));
+};
+
+cobolNodes.MoveVerb.prototype.toCSharp = function() {
+    return new csharpNodes.MethodInvokeExpression(this.where+".load", [this.what.toCSharp()]);
+};
+
+cobolNodes.SymbolExpression.prototype.toCSharp = function() {
+    return new csharpNodes.PrimitiveExpression(this.what);
+};

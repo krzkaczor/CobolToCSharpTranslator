@@ -107,16 +107,9 @@ expr
 	;
 
 literal
-	:	stringLiteral
-	|   numericLiteral
+	:	STRING #stringLiteral
+	|   NUMBER #numericLiteral
 	;
-
-stringLiteral
-	:   STRING
-	;
-
-
-numericLiteral: NUMBER ;
 
 NUMBER : [0-9]+;
 
