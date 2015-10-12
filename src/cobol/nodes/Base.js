@@ -37,6 +37,7 @@ module.exports = class Base {
      * @param {function | String} func
      */
     act(func, data) {
+        //that name rocks
         var fireOnlyOnChildren = (element) => {
             if (element instanceof Base) {
                 element.act(func, data);
@@ -45,8 +46,14 @@ module.exports = class Base {
 
         data = data || {};
 
+        //autowire properties with scope
         if (_.has(this, 'symbolTable')) {
             data.symbolTable = this.symbolTable;
+        }
+
+        if (_.has(this, '_globalScope')) {
+            data._globalScope = this._globalScope;
+            debugger;
         }
 
         if (this[func]) {
@@ -55,7 +62,6 @@ module.exports = class Base {
             func.apply(this, data);
         }
 
-        //call recursively
         _.pairs(this).filter(kv => kv[0] !== 'parent').map(kv => kv[1]).forEach(element => {
             if (_.isArray(element)) {
                 element.forEach(fireOnlyOnChildren);

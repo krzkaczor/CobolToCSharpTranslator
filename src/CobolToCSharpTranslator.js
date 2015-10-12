@@ -62,7 +62,7 @@ module.exports = class CobolToCSharpTranslator {
 
         //complete AST
         astCobol.bindWithParent();
-        astCobol.act('analyze');
+
 
         return astCobol;
     }
@@ -71,6 +71,7 @@ module.exports = class CobolToCSharpTranslator {
         var ast = this.getCobolAst(input);
 
         var rewrittenAst = this.cobolRewritters.reduce((ast, rewriter) => rewriter(ast), ast);
+        rewrittenAst.act('analyze');
 
         return rewrittenAst;
     }

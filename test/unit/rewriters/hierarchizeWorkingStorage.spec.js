@@ -8,15 +8,15 @@ var hierarchizeWorkingStorage = appRequire('cobol/rewriters/hierarchizeWorkingSt
 var nodes = appRequire('cobol/nodes');
 
 //mocks
-var GroupItem = function(lvl, v) {
+var GroupItem = function(lvl, name) {
     this.level = lvl;
-    this.value = v;
+    this.name = name;
     this.children = [];
 };
 
-var ElementaryItem = function(lvl, v) {
+var ElementaryItem = function(lvl, name) {
     this.level = lvl;
-    this.value = v;
+    this.name = name;
 };
 
 describe('Hierarchize working storage ', function () {
@@ -45,10 +45,10 @@ describe('Hierarchize working storage ', function () {
 
         expect(workingStorage.length).to.be.eq(2);
         expect(workingStorage[0].children.length).to.be.eq(3);
-        expect(workingStorage[1].value).to.be.eq('E');
-        expect(workingStorage[0].children[0].children[0].value).to.be.eq('C');
-        expect(workingStorage[0].children[0].children[1].value).to.be.eq('D');
-        expect(workingStorage[0].children[1].children[0].value).to.be.eq('X');
-        expect(workingStorage[0].children[2].value).to.be.eq('Y');
+        expect(workingStorage[1].name).to.be.eq('E');
+        expect(workingStorage[0].children[0].children[0].name).to.be.eq('C');
+        expect(workingStorage[0].children[0].children[1].name).to.be.eq('D');
+        expect(workingStorage[0].children[1].children[0].name).to.be.eq('X');
+        expect(workingStorage[0].children[2].name).to.be.eq('Y');
     });
 });

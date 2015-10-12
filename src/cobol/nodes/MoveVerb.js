@@ -6,4 +6,8 @@ module.exports = class MoveVerb extends Base {
         this.where = target;
         this.what = value;
     }
+
+    analyze(ctx) {
+        this.target = ctx._globalScope.get(this.where);
+    }
 };
