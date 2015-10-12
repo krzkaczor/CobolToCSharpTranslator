@@ -27,14 +27,8 @@ workingStorageSection
 	;
 
 variableDeclaration
-	:
-		elementaryItem
-	|   groupItem
-	;
-
-elementaryItem
-	:
-		NUMBER ID picture DOT
+	:   NUMBER ID picture DOT   #elementaryVariableDecl
+	|   NUMBER ID DOT           #groupVariableDecl
 	;
 
 /*TO BE FIX - WE NEED TO IMPLEMENT CONDITIONAL LEXING*/
@@ -42,13 +36,6 @@ picture
 	:	'PIC' (ID|NUMBER)                     #verbosePicture
 	|   'PIC' (ID|NUMBER) '(' NUMBER ')'      #numberPicture
 	;
-
-groupItem
-	:
-		NUMBER ID DOT
-		variableDeclaration+
-	;
-
 
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT

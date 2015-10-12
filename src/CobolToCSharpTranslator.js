@@ -33,7 +33,8 @@ module.exports = class CobolToCSharpTranslator {
 
         this.cobolRewritters = [
             loadCobolRewritter('createRunnerSection').bind(undefined, 'Runner'),
-            loadCobolRewritter('moveFreeStatementsToParagraph').bind(undefined, 'main')
+            loadCobolRewritter('moveFreeStatementsToParagraph').bind(undefined, 'main'),
+            loadCobolRewritter('hierarchizeWorkingStorage')
         ];
 
         this.cSharpRewritters = [

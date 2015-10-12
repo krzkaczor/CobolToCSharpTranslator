@@ -1,11 +1,16 @@
 var _ = require('lodash');
 
+/**
+ * Tiny class to manage symbol table
+ * basically it is Map<String, Object>
+ * @type {SymbolTable}
+ */
 module.exports = class SymbolTable {
     constructor() {
         this.data = {};
     }
 
-    set(key, value) {
+    set(key: string, value: any) {
         if (_.has(this.data, key)) {
             throw new Error('Symbol does already exist');
         }
@@ -13,7 +18,7 @@ module.exports = class SymbolTable {
         this.data[key] = value;
     }
 
-    get(key) {
+    get(key: string) {
         var value = this.data[key];
 
         if (_.isUndefined(value)) {
@@ -23,13 +28,13 @@ module.exports = class SymbolTable {
         return value;
     }
 
-    rename(oldKey, newKey) {
+    rename(oldKey: string, newKey: string) {
         var value = this.get(oldKey);
         delete this.data['oldKey'];
         this.set(newKey, value);
     }
 
-    contains(key) {
+    contains(key: string) {
         return _.has(this.data, key);
     }
 }

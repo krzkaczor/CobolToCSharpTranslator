@@ -19,9 +19,10 @@ autoVisitor(CobolVisitor);
 module.exports = class AstMapper extends CobolVisitor {
     visitCompilationUnit(ctx) {
         var identificationData = this.visit(ctx.identificationDivision());
+        var dataDivision = ctx.dataDivision()? this.visit(ctx.dataDivision()) : new nodes.DataDivision();
         var procedureDivision = this.visit(ctx.procedureDivision());
 
-        return new nodes.CompilationUnit(identificationData, procedureDivision);
+        return new nodes.CompilationUnit(identificationData, dataDivision, procedureDivision);
     }
 
     visitIdentificationDivision(ctx) {
@@ -32,6 +33,26 @@ module.exports = class AstMapper extends CobolVisitor {
 
     visitProgramId(ctx) {
         return ctx.ID().getText();
+    }
+
+    visitDataDivision(ctx) {
+        return new nodes.DataDivision(this.visit(ctx.workingStorageSection()));
+    }
+
+    visitWorkingStorageSection(ctx) {
+        return new nodes.WorkingStorageSection(this.visit(ctx.variableDeclaration()));
+    }
+
+    visitElementaryVariableDecl(ctx) {
+        return new nodes.ElementaryItem(parseInt(ctx.NUMBER().getText()), ctx.ID().getText(), "abc");
+    }
+
+    visitVerbosePicture(ctx) {
+        return "PICTUREEEEEE";
+    }
+
+    visitGroupVariableDecl(ctx) {
+        return new nodes.GroupItem(parseInt(ctx.NUMBER().getText()), ctx.ID().getText());
     }
 
     visitProcedureDivision(ctx) {
@@ -96,6 +117,6 @@ module.exports = class AstMapper extends CobolVisitor {
     }
 
     visitNumericLiteral(ctx) {
-        return new nodes.IntLiteral(ctx.getText());
+        return new nodes.IntLiteral(parseInt(ctx.getText()));
     }
 };
