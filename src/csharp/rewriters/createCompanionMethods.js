@@ -11,7 +11,7 @@ const COMPANION_METHOD_POSTIFX = 'AndContinue';
  */
 module.exports = function(compilationUnit) {
     compilationUnit.topLevelDeclarations
-        .filter(decl => decl instanceof ClassDeclaration)
+        .filter(decl => decl instanceof ClassDeclaration && !decl.isModelClass())
         .forEach(cls => {
             var companionMethods = cls.members.filter(mem => !mem.isMain()).map(member => {
                 var nextMethod = cls.getNextMember(member);

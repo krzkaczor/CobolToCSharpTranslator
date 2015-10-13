@@ -41,7 +41,7 @@ describe('Hierarchize working storage ', function () {
 
         hierarchizeWorkingStorage(cobolProgram);
 
-        var workingStorage = cobolProgram.dataDivision.workingStorageSection;
+        var workingStorage = cobolProgram.dataDivision.workingStorageSection.variables;
 
         expect(workingStorage.length).to.be.eq(2);
         expect(workingStorage[0].children.length).to.be.eq(3);

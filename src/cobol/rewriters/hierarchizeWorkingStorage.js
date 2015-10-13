@@ -22,7 +22,7 @@ module.exports = function(compilationUnit) {
     var workingStorageSection = compilationUnit.dataDivision.workingStorageSection;
 
     //create workingStorage
-    //todo: export to new rewritter
+    //todo: export to a new rewritter
     compilationUnit._globalScope = new SymbolTable();
     workingStorageSection.variables.forEach(variables => compilationUnit._globalScope.set(variables.name, variables));
 
@@ -40,7 +40,7 @@ module.exports = function(compilationUnit) {
 
     hierarchize(root);
 
-    compilationUnit.dataDivision.workingStorageSection = root.children;
+    compilationUnit.dataDivision.workingStorageSection.variables = root.children;
 
     return compilationUnit;
 };

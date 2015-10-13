@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var Base = require('./Base');
 var MethodInvokeExpression = require('./MethodInvokeExpression');
-var assert = require('assert');
 
 module.exports = class MethodMember extends Base {
     constructor(name: string, stats: Array<Base>, isStatic: ?boolean = false) {

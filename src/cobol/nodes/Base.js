@@ -53,7 +53,6 @@ module.exports = class Base {
 
         if (_.has(this, '_globalScope')) {
             data._globalScope = this._globalScope;
-            debugger;
         }
 
         if (this[func]) {
