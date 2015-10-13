@@ -11,7 +11,6 @@ var antlr4 = require('antlr4');
 var Cobol85Lexer = require('./cobol/parser/Cobol85Lexer').Cobol85Lexer;
 var Cobol85Parser = require('./cobol/parser/Cobol85Parser').Cobol85Parser;
 var Cobol85Visitor = require('./cobol/parser/Cobol85Visitor').Cobol85Visitor;
-var visitorWrapper = require('./cobol/parser/VisitorWrapper');
 
 var CobolAstMapper = require('./cobol/parser/AstMapper');
 
