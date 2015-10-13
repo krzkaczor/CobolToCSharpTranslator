@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive /Users/krzkaczor/Workspace/CobolToCSharpTranslator/test"
   },
   "author": "",
   "license": "ISC",
