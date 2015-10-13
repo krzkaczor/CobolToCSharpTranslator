@@ -3,9 +3,6 @@ var _ = require('lodash');
 var cobolNodes = require('../cobol/nodes');
 var csharpNodes = require('./nodes');
 
-console.log("DEBUG=============");  
-console.log(cobolNodes);
-
 //helpers
 var allToCSharp = function(arr) {
     return arr.map(e => e.toCSharp());
