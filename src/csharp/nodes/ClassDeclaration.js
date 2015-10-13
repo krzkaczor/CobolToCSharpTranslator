@@ -19,15 +19,6 @@ module.exports = class ClassDeclaration extends Base {
         member._parent = this;
     }
 
-    /**
-     * Model classes have only attribute members
-     * @returns {boolean}
-     */
-    isModelClass():boolean {
-        var AttributeMember = require('./AttributeMember');
-        return this.members.every(mem => mem instanceof AttributeMember);
-    }
-
     getNextMember(member) {
         var applicableMethods = this.members.filter(mem => !mem._shadow);
         var nextMethod =  applicableMethods[_.findIndex(applicableMethods, mem => mem === member) + 1];

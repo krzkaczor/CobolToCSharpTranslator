@@ -5,13 +5,14 @@ var MethodMember = require('../nodes/MethodMember');
 var MethodInvokeExpression = require('../nodes/MethodInvokeExpression');
 
 const COMPANION_METHOD_POSTIFX = 'AndContinue';
+
 /**
  * Companion methods are methods used to simulate cobol program flow in C# ex. falling to next paragraph
  * @param {Object} compilationUnit
  */
 module.exports = function(compilationUnit) {
     compilationUnit.topLevelDeclarations
-        .filter(decl => decl instanceof ClassDeclaration && !decl.isModelClass())
+        .filter(decl => decl instanceof ClassDeclaration && decl.continuousFlow)
         .forEach(cls => {
             var companionMethods = cls.members.filter(mem => !mem.isMain()).map(member => {
                 var nextMethod = cls.getNextMember(member);

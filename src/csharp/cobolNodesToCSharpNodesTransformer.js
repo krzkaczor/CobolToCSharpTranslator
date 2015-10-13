@@ -20,7 +20,11 @@ const CSHARP_RUNTIME = {
 
 
 cobolNodes.CompilationUnit.prototype.toCSharp = function () {
-    var classes = _.flatten([this.dataDivision.toCSharp(), this.procedureDivision.toCSharp()]);
+    var dataDivison = this.dataDivision.toCSharp();
+    var procedureDivision = this.procedureDivision.toCSharp();
+
+    var classes = _.flatten([dataDivison, procedureDivision]);
+
     return new csharpNodes.CompilationUnit(['System'], classes);
 };
 
@@ -62,7 +66,11 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
 };
 
 cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
-    return allToCSharp(this.sections);
+    var procedureClasses =  allToCSharp(this.sections);
+
+    procedureClasses.forEach(cls => cls.continuousFlow = true);
+
+    return procedureClasses;
 };
 
 cobolNodes.Section.prototype.toCSharp = function() {
