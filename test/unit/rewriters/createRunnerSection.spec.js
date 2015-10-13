@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var appRequire = require('../../testHelper').appRequire;
 var purge = require('../../testHelper').purge;
 
-var createRunnerSectionRewritter = appRequire('cobol/rewriters/createRunnerSection.js');
+var createRunnerSectionRewritter = appRequire('cobol/rewriters/createRunnerSection');
 var nodes = appRequire('cobol/nodes');
 
 describe('Create runner section rewriter', function () {
