@@ -1,22 +1,24 @@
 var _ = require('lodash');
 var Base = require('./Base');
+var RawExpression = require('./RawExpression');
 
 module.exports = class MethodInvokeExpression extends Base {
-    constructor(reference : string|Base, args: ?Array<Base>) {
+    constructor(reference : Base, args: ?Array<Base>) {
         super();
         this._reference = reference;
         this.args = args || [];
     }
 
     toSource() {
-        if (_.isString(this._reference)) {
-            return `${this._reference}(${this.allToSource(this.args)});`;
-        } else {
-            if (this.goTo) {
-                this._reference = this._reference.findCompanion();
-            }
+        var MethodMember = require('./MethodMember');
+        if (this._reference instanceof RawExpression) {
+            return `${this._reference.toSource()}(${this.allToSource(this.args)});`;
+        }
 
+        if (this._reference instanceof MethodMember) {
             return `${this._reference._parent.name}.${this._reference.name}(${this.allToSource(this.args)});`;
         }
+
+        return `${this._reference.name}(${this.allToSource(this.args)});`;
     }
 };

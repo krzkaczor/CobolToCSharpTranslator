@@ -2,9 +2,9 @@ var _ = require('lodash');
 var utils = require('../../utils');
 var ClassDeclaration = require('../nodes/ClassDeclaration');
 var MethodMember = require('../nodes/MethodMember');
+var RawExpression = require('../nodes/RawExpression');
 var MethodInvokeExpression = require('../nodes/MethodInvokeExpression');
-
-const COMPANION_METHOD_POSTIFX = 'AndContinue';
+var helper = require('../transformerHelper');
 
 /**
  * Companion methods are methods used to simulate cobol program flow in C# ex. falling to next paragraph
@@ -17,10 +17,10 @@ module.exports = function(compilationUnit) {
             var companionMethods = cls.members.filter(mem => !mem.isMain()).map(member => {
                 var nextMethod = cls.getNextMember(member);
                 var companion = new MethodMember(
-                    member.name+COMPANION_METHOD_POSTIFX,
+                    helper.translateMethodNameToCompanionMethodName(member.name),
                     utils.removeUndefinedEntries([
                         new MethodInvokeExpression(member),
-                        nextMethod? new MethodInvokeExpression(`${nextMethod._parent.name}.${nextMethod.name}${COMPANION_METHOD_POSTIFX}`) : undefined //we cannot use here findCompanion method because we are creating companion right now
+                        nextMethod? new MethodInvokeExpression(new RawExpression(`${nextMethod._parent.name}.${helper.translateMethodNameToCompanionMethodName(nextMethod.name)}`)) : undefined //we cannot use here findCompanion method because we are creating companion right now
                     ]),
                     true
                 );

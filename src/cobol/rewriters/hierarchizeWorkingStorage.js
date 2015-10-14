@@ -33,6 +33,7 @@ module.exports = function(compilationUnit) {
         while(_.head(dataItems) && _.head(dataItems).level > parent.level) {
             head = dataItems.shift();
             parent.children.push(head);
+            head._parent = parent;
             hierarchize(head);
         }
     }

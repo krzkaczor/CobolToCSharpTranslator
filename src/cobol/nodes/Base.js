@@ -1,6 +1,5 @@
 var _ =  require('lodash');
 var memoize = require('memoizee');
-
 module.exports = class Base {
     constructor() {
         this.TYPE = "cobol." + this.constructor.name;
@@ -19,7 +18,7 @@ module.exports = class Base {
             }
         };
 
-        _.values(this).forEach(element => {
+        _.pairs(this).filter(kv=> !_.startsWith(kv[0], '_')).map(kv => kv[1]).forEach(element => {
             if (_.isArray(element)) {
                 element.forEach(bindBaseElement);
             } else {
@@ -28,7 +27,7 @@ module.exports = class Base {
         });
 
         if (parent) {
-            this.parent = parent;
+            this._parent = parent;
         }
     }
 
@@ -61,7 +60,7 @@ module.exports = class Base {
             func.apply(this, data);
         }
 
-        _.pairs(this).filter(kv => kv[0] !== 'parent').map(kv => kv[1]).forEach(element => {
+        _.pairs(this).filter(kv => !_.startsWith(kv[0], '_')).map(kv => kv[1]).forEach(element => {
             if (_.isArray(element)) {
                 element.forEach(fireOnlyOnChildren);
             } else {

@@ -2,22 +2,8 @@ var _ = require('lodash');
 
 var cobolNodes = require('../cobol/nodes');
 var csharpNodes = require('./nodes');
-
-//helpers
-var allToCSharp = function(arr) {
-    return arr.map(e => e.toCSharp());
-};
-
-function translateDataItemName(name) {
-    return name + "Struct";
-}
-
-//runtime
-const CSHARP_RUNTIME = {
-    int : new csharpNodes.ClassDeclaration('int'),
-    string  : new csharpNodes.ClassDeclaration('string')
-};
-
+var helper = require('./transformerHelper');
+var CsharpRuntime = require('./Runtime');
 
 cobolNodes.CompilationUnit.prototype.toCSharp = function () {
     var dataDivison = this.dataDivision.toCSharp();
@@ -36,24 +22,24 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
     function translateChildren(correspondingClass: csharpNodes.ClassDeclaration, children: Array) {
         children.forEach(child => {
             if (child instanceof cobolNodes.GroupItem) {
-                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[translateDataItemName(child.name)], true));
+                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], true));
             } else {
-                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CSHARP_RUNTIME[child.picture], true));
+                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CsharpRuntime[child.picture], true));
             }
         });
     }
 
     //creating schema
-    var globalScope = this.parent.parent._globalScope;
+    var globalScope = this._parent._parent._globalScope;
     var groupItems = _.values(globalScope.data).filter(g => g instanceof cobolNodes.GroupItem);
 
     var classes = _.chain(groupItems)
-        .map(group => new csharpNodes.ClassDeclaration(translateDataItemName(group.name)))
+        .map(group => new csharpNodes.ClassDeclaration(helper.translateDataItemName(group.name)))
         .indexBy('name')
         .run();
 
     groupItems.forEach(group => {
-        var correspondingClass = classes[translateDataItemName(group.name)];
+        var correspondingClass = classes[helper.translateDataItemName(group.name)];
 
         translateChildren(correspondingClass, group.children);
     });
@@ -66,7 +52,7 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
 };
 
 cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
-    var procedureClasses =  allToCSharp(this.sections);
+    var procedureClasses =  helper.allToCSharp(this.sections);
 
     procedureClasses.forEach(cls => cls.continuousFlow = true);
 
@@ -74,26 +60,23 @@ cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
 };
 
 cobolNodes.Section.prototype.toCSharp = function() {
-    return new csharpNodes.ClassDeclaration(this.name, allToCSharp(this.paragraphs));
+    return new csharpNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs));
 };
 
 cobolNodes.Paragraph.prototype.toCSharp = function () {
     //flatten all sentences into one big array of C# statements
     var stats = _.flatten(this.sentences.map(sent => sent.statements));
 
-    return new csharpNodes.MethodMember(this.name, allToCSharp(stats), true);
+    return new csharpNodes.MethodMember(this.name, helper.allToCSharp(stats), true);
 };
 
 cobolNodes.StopRunVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression('System.Environment.Exit', ['0']);
+    return new csharpNodes.MethodInvokeExpression(CsharpRuntime['System.Environment.Exit'], ['0']);
 };
 
 cobolNodes.GoToVerb.prototype.toCSharp = function() {
     //thanks to memoization we WILL get the same translated object
-    debugger;
-    var invokeExpr = new csharpNodes.MethodInvokeExpression(this.target.toCSharp());
-    invokeExpr.goTo = true;
-    return invokeExpr;
+    return new csharpNodes.MethodInvokeExpression(new csharpNodes.RawExpression(helper.translateMethodNameToCompanionMethodName(this.target.name)));
 };
 
 cobolNodes.PerformVerb.prototype.toCSharp = function() {
@@ -101,7 +84,7 @@ cobolNodes.PerformVerb.prototype.toCSharp = function() {
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function() {
-    var printFunction = this.advancing? 'Console.WriteLine' : 'Console.Write';
+    var printFunction = this.advancing? CsharpRuntime['Console.WriteLine'] : CsharpRuntime['Console.Write'];
     return new csharpNodes.MethodInvokeExpression(printFunction, [this.what.toCSharp()]);
 };
 
@@ -114,7 +97,9 @@ cobolNodes.IntLiteral.prototype.toCSharp = function() {
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression(this.where+".load", [this.what.toCSharp()]);
+    var fullName = helper.translateDataItemName(this.target);
+
+    return new csharpNodes.MethodInvokeExpression(new csharpNodes.RawExpression(fullName+".load"), [this.what.toCSharp()]);
 };
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function() {
