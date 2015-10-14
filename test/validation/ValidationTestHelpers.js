@@ -24,6 +24,10 @@ var runCobol = function(program) {
         free: true
     };
 
+    if (require('os').platform() == 'linux') {
+        opts.cobcArgs = '-O';
+    }
+
     return Q.Promise(function(resolve, reject) {
         Cobol(program, opts, function (err, data) {
             if (!err) {
