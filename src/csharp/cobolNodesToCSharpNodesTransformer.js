@@ -19,12 +19,12 @@ cobolNodes.DataDivision.prototype.toCSharp = function() {
 };
 
 cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
-    function translateChildren(correspondingClass: csharpNodes.ClassDeclaration, children: Array) {
+    function translateChildren(correspondingClass: csharpNodes.ClassDeclaration, children: Array, makeStatic: ?boolean = false) {
         children.forEach(child => {
             if (child instanceof cobolNodes.GroupItem) {
-                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], true));
+                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], makeStatic, new csharpNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).fromCobol(child));
             } else {
-                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CsharpRuntime[child.picture], true));
+                correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CsharpRuntime[child.picture.type], makeStatic).fromCobol(child));
             }
         });
     }
@@ -34,7 +34,7 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
     var groupItems = _.values(globalScope.data).filter(g => g instanceof cobolNodes.GroupItem);
 
     var classes = _.chain(groupItems)
-        .map(group => new csharpNodes.ClassDeclaration(helper.translateDataItemName(group.name)))
+        .map(group => new csharpNodes.ClassDeclaration(helper.translateDataItemName(group.name)).fromCobol(group))
         .indexBy('name')
         .run();
 
@@ -45,8 +45,27 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function() {
     });
 
     var dataStore = new csharpNodes.ClassDeclaration('DataStore');
-    translateChildren(dataStore, this.variables);
+    dataStore.fromCobol(this);
+    translateChildren(dataStore, this.variables, true);
 
+    //bind cobol elements to dataStore attributes
+    //_.values(globalScope).forEach(
+
+    rec(dataStore, dataStore);
+    function rec(currentRef, nextItem) {
+        if (!nextItem) return;
+        if (!currentRef) {currentRef = nextItem;}
+        nextItem._cobolOrigin.csharpRef = currentRef;
+        if (nextItem.members) {
+            nextItem.members.forEach(mem => {
+                if (mem._cobolOrigin instanceof cobolNodes.GroupItem) {
+                    rec(new csharpNodes.MemberAccess(currentRef, mem), mem._type);
+                } else {
+                    rec(new csharpNodes.MemberAccess(currentRef, mem), mem);
+                }
+            });
+        }
+    }
 
     return _.flatten([_.values(classes), dataStore]);
 };
@@ -97,11 +116,9 @@ cobolNodes.IntLiteral.prototype.toCSharp = function() {
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function() {
-    var fullName = helper.translateDataItemName(this.target);
-
-    return new csharpNodes.MethodInvokeExpression(new csharpNodes.RawExpression(fullName+".load"), [this.what.toCSharp()]);
+    return new csharpNodes.AssignmentOperator(this.target.csharpRef, this.what.toCSharp());
 };
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function() {
-    return new csharpNodes.PrimitiveExpression(this.what);
+    return this.target.csharpRef;
 };

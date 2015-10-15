@@ -49,21 +49,22 @@ module.exports = class AstMapper extends CobolVisitor {
 
     visitVerbosePicture(ctx) {
         var type = ctx.children[1].getText();
+        var times = type.length;
 
         if (type[0] === 'X')
-            return 'string';
+            return new nodes.Picture('string', times);
         else
-            return 'int';
+            return new nodes.Picture('int', times);
     }
 
     visitNumberPicture(ctx) {
         var type = ctx.children[1].getText();
-        var times = ctx.children[3].getText();
+        var times = parseInt(ctx.children[3].getText());
 
         if (type[0] === 'X')
-            return 'string';
+            return new nodes.Picture('string', times);
         else
-            return 'int';
+            return new nodes.Picture('int', times);
     }
 
     visitGroupVariableDecl(ctx) {

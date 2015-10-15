@@ -1,4 +1,5 @@
 var _ =  require('lodash');
+var CobolBase = require('../../cobol/nodes/Base');
 
 module.exports = class Base {
     constructor() {
@@ -23,6 +24,11 @@ module.exports = class Base {
         if (parent) {
             this._parent = parent;
         }
+    }
+
+    fromCobol(cobolOrigin: CobolBase) {
+        this._cobolOrigin = cobolOrigin;
+        return this;
     }
 
     toSource() {
