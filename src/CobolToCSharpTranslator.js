@@ -3,7 +3,7 @@ require('./polyfills');
 
 var fs = require('fs');
 var path = require('path');
-var csharpTransformer = require('./csharp/cobolNodesToCSharpNodesTransformer');
+var csharpTransformer = require('./transform/attachTransformer');
 
 //const PARSER_PATH = path.join(__dirname, 'cobol/grammar');
 

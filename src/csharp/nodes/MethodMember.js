@@ -3,11 +3,12 @@ var Base = require('./Base');
 var MethodInvokeExpression = require('./MethodInvokeExpression');
 
 module.exports = class MethodMember extends Base {
-    constructor(name: string, stats: Array<Base>, isStatic: ?boolean = false) {
+    constructor(name: string, stats: Array<Base>, isStatic: ?boolean = false, options: ?Object = {}) {
         super();
         this.name = name;
         this.stats = stats;
         this.isStatic = isStatic;
+        this.options = options;
     }
 
     isMain() {
@@ -27,16 +28,20 @@ module.exports = class MethodMember extends Base {
 
     toSource() {
         var nextMethod = this._parent.getNextMember(this);
+        var type = this.options.returnType? this.options.returnType.toSource() : 'void';
         if (this.isMain()) {
-            return 'public {0}void {1}() {\n{2}{3}}\n'.format(
+            return 'public {0} {1} {2}() {\n{3}{4}}\n'.format(
                 this.isStatic ? 'static ' : '',
+                type,
                 this.name,
                 this.allToSource(this.stats).join('\n'),
                 nextMethod?new MethodInvokeExpression(nextMethod.findCompanion()).toSource() :''
             );
         } else {
-            return 'public {0}void {1}() {\n{2}}\n'.format(
+            return 'public {0} {1} {2} {3}() {\n{4}}\n'.format(
+                this.options.override? 'override' : '',
                 this.isStatic ? 'static ' : '',
+                type,
                 this.name,
                 this.allToSource(this.stats).join('\n')
             );

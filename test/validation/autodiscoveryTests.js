@@ -15,7 +15,7 @@ var cobolToCSharpTranslator = new CobolToCSharpTranslator();
 
 const VALIDATION_TESTS_DIR = path.join(__dirname, '..', '..', 'samples');
 
-const ignoredFiles = ['basicData.cob', 'nextFeature.cob', 'Accept.cob'];
+const ignoredFiles = ['nextFeature.cob', 'Accept.cob'];
 
 //const runOnly = ['Shortest.cob'];
 
