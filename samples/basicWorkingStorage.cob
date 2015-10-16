@@ -10,6 +10,7 @@ WORKING-STORAGE SECTION.
        03 Initials     PIC XX.
    02  CourseCode      PIC X(4).
    02  Gender          PIC X.
+01 VER                 PIC X(10).
 
 PROCEDURE DIVISION.
 Begin.
@@ -18,5 +19,8 @@ Begin.
     MOVE "KK" TO Initials.
     MOVE "ABCD" TO CourseCode.
     MOVE "M" TO Gender.
+
     DISPLAY StudentDetails.
+    MOVE "ver" TO VER.
+    DISPLAY VER.
     STOP RUN.

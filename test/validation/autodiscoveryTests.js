@@ -56,7 +56,7 @@ function makeTest(file, fullPath) {
 
             Q.all([cobolResultPromise, cSharpResultPromise]).then(function (res) {
                 var cobolResult = ValidationTestHelpers.normalizeCobolOutput(res[0]);
-                var cSharpResult = res[1];
+                var cSharpResult = ValidationTestHelpers.normalizeCobolOutput(res[1]);
 
                 expect(cobolResult).to.be.equal(cSharpResult);
 

@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var fs = require('fs');
 var join = require('path').join;
 
@@ -41,7 +42,7 @@ var runCobol = function(program) {
 };
 
 var normalizeCobolOutput = function(output) {
-  return output + "\n";
+  return _.trimRight(output);
 };
 
 
