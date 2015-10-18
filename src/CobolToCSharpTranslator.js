@@ -5,8 +5,6 @@ var fs = require('fs');
 var path = require('path');
 var csharpTransformer = require('./transform/attachTransformer');
 
-//const PARSER_PATH = path.join(__dirname, 'cobol/grammar');
-
 var antlr4 = require('antlr4');
 var Cobol85Lexer = require('./cobol/parser/Cobol85Lexer').Cobol85Lexer;
 var Cobol85Parser = require('./cobol/parser/Cobol85Parser').Cobol85Parser;
@@ -26,6 +24,10 @@ function loadCSharpRewritter(name) {
     return require(`./csharp/rewriters/${name}`);
 }
 
+function loadPostprocessor(name) {
+    return require(`./csharp/postprocessors/${name}`);
+}
+
 module.exports = class CobolToCSharpTranslator {
     constructor() {
         this.preprocessors = [loadPreprocessor('removeMicrofocusDirectives')];
@@ -40,7 +42,7 @@ module.exports = class CobolToCSharpTranslator {
             loadCSharpRewritter('createCompanionMethods')
         ];
 
-        this.postprocessor = []; //TODO: inject here postprocessor to deal with code formating of csharp code
+        this.postprocessors = [loadPostprocessor('codeFormatter')];
     }
 
     preprocessInput(input) {
@@ -85,6 +87,9 @@ module.exports = class CobolToCSharpTranslator {
     }
 
     getCSharpCode(input) {
-        return this.getCSharpAst(input).toSource();
+        var sourceCode = this.getCSharpAst(input).toSource();
+        var postprocessedSource = this.postprocessors.reduce((source, processor) => processor(source), sourceCode);
+
+        return postprocessedSource;
     }
 };
