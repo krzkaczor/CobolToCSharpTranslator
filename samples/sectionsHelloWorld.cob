@@ -6,7 +6,7 @@
        Section1 SECTION.
               DISPLAY "Section sen1 stat1"
               DISPLAY "section sen1 stat2".
-              Greeting.
+              Par1.
                   DISPLAY "PAR 1".
 
        Section2 SECTION.
