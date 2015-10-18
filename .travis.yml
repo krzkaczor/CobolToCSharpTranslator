@@ -7,5 +7,6 @@ sudo: true
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y mono-complete open-cobol
-  - build/install-dependencies.sh
+  - sudo apt-get install -y open-cobol
+  - build/install-mono.sh
+  - build/install-antlr.sh
