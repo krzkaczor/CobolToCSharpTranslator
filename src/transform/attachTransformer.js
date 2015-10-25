@@ -5,7 +5,7 @@ var csharpNodes = require('./../csharp/nodes/index');
 var helper = require('./../csharp/transformerHelper');
 var CsharpRuntime = require('./../csharp/Runtime');
 
-require('./WorkingStorageSection');
+require('./attachStorageTransformer');
 
 cobolNodes.CompilationUnit.prototype.toCSharp = function () {
     var dataDivison = this.dataDivision.toCSharp();
@@ -67,9 +67,9 @@ cobolNodes.IntLiteral.prototype.toCSharp = function() {
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function() {
-    return new csharpNodes.AssignmentOperator(this.target.csharpRef, this.what.toCSharp());
+    return this.target.toCSharpAssignment(this.what);
 };
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function() {
-    return this.target.csharpRef;
+    return this.target.toCSharpString();
 };

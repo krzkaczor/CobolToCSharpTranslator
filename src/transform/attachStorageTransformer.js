@@ -14,6 +14,9 @@ function translateChildren(classes, correspondingClass:csharpNodes.ClassDeclarat
         }
     });
 
+    //generate loader for each member
+
+
     if (genToString) {
         var sinkVariable = new csharpNodes.SymbolExpression('description');
 
@@ -82,3 +85,31 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function () {
 
     return _.flatten([_.values(classes), dataStore]);
 };
+
+cobolNodes.ElementaryItem.prototype.toCSharpAssignment = function(what) {
+  return new csharpNodes.AssignmentOperator(this.csharpRef, what.toCSharp());
+};
+
+cobolNodes.GroupItem.prototype.toCSharpAssignment = function(what) {
+    //todo: refactor member accesow
+    var target = new csharpNodes.RawExpression(`${this.csharpRef.toSource()}.load`);
+    return new csharpNodes.MethodInvokeExpression(target, [what.toCSharp()]);
+};
+
+cobolNodes.GroupItem.prototype.toCSharpString = function() {
+    return this.csharpRef;
+};
+
+cobolNodes.ElementaryItem.prototype.toCSharpString = function() {
+    if (this.picture.type === 'int') {
+        return new csharpNodes.RawExpression(
+            this.csharpRef.toSource() + "." + 'ToString' + `("D${this.picture.size}")`
+        );
+    }
+
+    if (this.picture.type === 'string') {
+        return new csharpNodes.RawExpression(
+            this.csharpRef.toSource() + "." + `PadRight(${this.picture.size})`
+        );
+    }
+}

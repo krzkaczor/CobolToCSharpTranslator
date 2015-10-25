@@ -1,15 +1,11 @@
 var _ = require('lodash');
 var Base = require('./Base');
 var PrimitiveExpression = require('./PrimitiveExpression');
+var OperatorCall = require('./OperatorCall');
 
-module.exports = class AssignmentOperator extends Base {
+
+module.exports = class AssignmentOperator extends OperatorCall {
     constructor(target: Base, value: Base) {
-        super();
-        this.target = target;
-        this.value = value;
-    }
-
-    toSource() {
-        return `${this.target.toSource()} = ${this.value.toSource()};`;
+        super('=', target, value);
     }
 };

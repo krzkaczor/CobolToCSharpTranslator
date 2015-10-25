@@ -1,12 +1,13 @@
 var _ = require('lodash');
 var Base = require('./Base');
 var RawExpression = require('./RawExpression');
+var MemberAccess = require('./MemberAccess');
 
 module.exports = class MethodInvokeExpression extends Base {
-    constructor(reference : Base, args: ?Array<Base>) {
+    constructor(reference : Base, args: ?Array<Base> = []) {
         super();
         this._reference = reference;
-        this.args = args || [];
+        this.args = args;
     }
 
     toSource() {

@@ -23,4 +23,5 @@ Begin.
     DISPLAY StudentDetails.
     MOVE "ver" TO VER.
     DISPLAY VER.
+    DISPLAY StudentId.
     STOP RUN.
