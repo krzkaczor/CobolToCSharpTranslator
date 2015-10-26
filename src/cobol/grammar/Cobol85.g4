@@ -80,7 +80,8 @@ goToStat
 	;
 
 performStat
-	:	'PERFORM' ID
+	:	'PERFORM' ID #performSingleStat
+	|   'PERFORM' ID NUMBER 'TIMES' #performTimesStat
 	;
 
 displayStat

@@ -13,23 +13,23 @@ cobolNodes.CompilationUnit.prototype.toCSharp = function () {
 
     var classes = _.flatten([dataDivison, procedureDivision]);
 
-    return new csharpNodes.CompilationUnit(['System'], classes);
+    return new csharpNodes.CompilationUnit(['System', 'System.Linq'], classes);
 };
 
-cobolNodes.DataDivision.prototype.toCSharp = function() {
+cobolNodes.DataDivision.prototype.toCSharp = function () {
     return this.workingStorageSection.toCSharp();
 };
 
 
 cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
-    var procedureClasses =  helper.allToCSharp(this.sections);
+    var procedureClasses = helper.allToCSharp(this.sections);
 
     procedureClasses.forEach(cls => cls.continuousFlow = true);
 
     return procedureClasses;
 };
 
-cobolNodes.Section.prototype.toCSharp = function() {
+cobolNodes.Section.prototype.toCSharp = function () {
     return new csharpNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs));
 };
 
@@ -40,36 +40,41 @@ cobolNodes.Paragraph.prototype.toCSharp = function () {
     return new csharpNodes.MethodMember(this.name, helper.allToCSharp(stats), true);
 };
 
-cobolNodes.StopRunVerb.prototype.toCSharp = function() {
+cobolNodes.StopRunVerb.prototype.toCSharp = function () {
     return new csharpNodes.MethodInvokeExpression(CsharpRuntime['System.Environment.Exit'], ['0']);
 };
 
-cobolNodes.GoToVerb.prototype.toCSharp = function() {
+cobolNodes.GoToVerb.prototype.toCSharp = function () {
     //thanks to memoization we WILL get the same translated object
     return new csharpNodes.MethodInvokeExpression(new csharpNodes.RawExpression(helper.translateMethodNameToCompanionMethodName(this.target.name)));
 };
 
-cobolNodes.PerformVerb.prototype.toCSharp = function() {
-    return new csharpNodes.MethodInvokeExpression(this.target.toCSharp()); //thanks to memoization we WILL get the same translated object
+cobolNodes.PerformVerb.prototype.toCSharp = function () {
+    var methodCall = new csharpNodes.MethodInvokeExpression(this.target.toCSharp()); //thanks to memoization we WILL get the same translated object
+    if (this.times == 1) {
+        return methodCall;
+    } else {
+        return new csharpNodes.RawExpression(`Enumerable.Range(0, ${this.times}).ToList().ForEach(_ => ${this.target.name}());`);
+    }
 };
 
-cobolNodes.DisplayVerb.prototype.toCSharp = function() {
-    var printFunction = this.advancing? CsharpRuntime['Console.WriteLine'] : CsharpRuntime['Console.Write'];
+cobolNodes.DisplayVerb.prototype.toCSharp = function () {
+    var printFunction = this.advancing ? CsharpRuntime['Console.WriteLine'] : CsharpRuntime['Console.Write'];
     return new csharpNodes.MethodInvokeExpression(printFunction, [this.what.toCSharp()]);
 };
 
-cobolNodes.StringLiteral.prototype.toCSharp = function() {
+cobolNodes.StringLiteral.prototype.toCSharp = function () {
     return new csharpNodes.PrimitiveExpression('"{0}"'.format(this.value));
 };
 
-cobolNodes.IntLiteral.prototype.toCSharp = function() {
+cobolNodes.IntLiteral.prototype.toCSharp = function () {
     return new csharpNodes.PrimitiveExpression('{0}'.format(this.value));
 };
 
-cobolNodes.MoveVerb.prototype.toCSharp = function() {
+cobolNodes.MoveVerb.prototype.toCSharp = function () {
     return this.target.toCSharpAssignment(this.what);
 };
 
-cobolNodes.SymbolExpression.prototype.toCSharp = function() {
+cobolNodes.SymbolExpression.prototype.toCSharp = function () {
     return this.target.toCSharpString();
 };
