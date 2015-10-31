@@ -14,7 +14,6 @@
     "grunt-cli": "^0.1.13",
     "jison": "^0.4.15",
     "lodash": "^3.10.1",
-    "memoizee": "^0.3.9",
     "q": "^1.4.1"
   },
   "devDependencies": {
