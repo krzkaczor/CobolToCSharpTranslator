@@ -2,6 +2,11 @@ var _ = require('lodash');
 
 var cobolNodes = require('../cobol/nodes/index');
 var csharpNodes = require('./../csharp/nodes/index');
+var TypeRefExpr = csharpNodes.TypeReferenceExpression;
+var CobolTypeRefExpr = csharpNodes.CobolTypeReferenceExpression;
+var Stat = csharpNodes.Statement;
+var MethodInvokeExpr = csharpNodes.MethodInvokeExpression;
+
 var helper = require('./../csharp/transformerHelper');
 var CsharpRuntime = require('./../csharp/Runtime');
 
@@ -30,27 +35,26 @@ cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
 };
 
 cobolNodes.Section.prototype.toCSharp = function () {
-    return new csharpNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs));
+    return new csharpNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs)).bindWithCounterpart(this);
 };
 
 cobolNodes.Paragraph.prototype.toCSharp = function () {
     //flatten all sentences into one big array of C# statements
     var stats = _.flatten(this.sentences.map(sent => sent.statements));
 
-    return new csharpNodes.MethodMember(this.name, helper.allToCSharp(stats), true);
+    return new csharpNodes.MethodMember(this.name, helper.allToCSharp(stats), true).bindWithCounterpart(this);
 };
 
 cobolNodes.StopRunVerb.prototype.toCSharp = function () {
-    return new csharpNodes.MethodInvokeExpression(CsharpRuntime['System.Environment.Exit'], ['0']);
+    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.System.Environment), 'Exit', [0]));
 };
 
 cobolNodes.GoToVerb.prototype.toCSharp = function () {
-    //thanks to memoization we WILL get the same translated object
-    return new csharpNodes.MethodInvokeExpression(new csharpNodes.RawExpression(helper.translateMethodNameToCompanionMethodName(this.target.name)));
+    return new Stat(new MethodInvokeExpr(new CobolTypeRefExpr(this.target._parent), helper.translateMethodNameToCompanionMethodName(this.target.name)));
 };
 
 cobolNodes.PerformVerb.prototype.toCSharp = function () {
-    var methodCall = new csharpNodes.MethodInvokeExpression(this.target.toCSharp()); //thanks to memoization we WILL get the same translated object
+    var methodCall = new Stat(new MethodInvokeExpr(new CobolTypeRefExpr(this.target._parent), this.target.name));
     if (this.times == 1) {
         return methodCall;
     } else {
@@ -59,8 +63,8 @@ cobolNodes.PerformVerb.prototype.toCSharp = function () {
 };
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function () {
-    var printFunction = this.advancing ? CsharpRuntime['Console.WriteLine'] : CsharpRuntime['Console.Write'];
-    return new csharpNodes.MethodInvokeExpression(printFunction, [this.what.toCSharp()]);
+    var printFunction = this.advancing ? 'WriteLine' : 'Write';
+    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), printFunction, [this.what.toCSharp()]));
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function () {

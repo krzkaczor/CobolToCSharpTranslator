@@ -1,7 +1,7 @@
 var Base = require('./Base');
 
 module.exports = class GoToVerb extends Base {
-    constructor(targetName) {
+    constructor(targetName: string) {
         super();
         this.targetName = targetName;
     }

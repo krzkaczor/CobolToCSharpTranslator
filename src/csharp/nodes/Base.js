@@ -1,4 +1,5 @@
 var _ =  require('lodash');
+var actOnNodes = require('../../common/actOnNodes');
 var CobolBase = require('../../cobol/nodes/Base');
 
 module.exports = class Base {
@@ -24,6 +25,16 @@ module.exports = class Base {
         if (parent) {
             this._parent = parent;
         }
+    }
+
+    act() {
+        return actOnNodes(this, ...arguments);
+    }
+
+    bindWithCounterpart(counterPart) {
+        this._cobolRef = counterPart;
+        counterPart._csharpRef = this;
+        return this;
     }
 
     fromCobol(cobolOrigin: CobolBase) {

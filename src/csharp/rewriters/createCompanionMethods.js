@@ -3,7 +3,10 @@ var utils = require('../../utils');
 var ClassDeclaration = require('../nodes/ClassDeclaration');
 var MethodMember = require('../nodes/MethodMember');
 var RawExpression = require('../nodes/RawExpression');
-var MethodInvokeExpression = require('../nodes/MethodInvokeExpression');
+var MethodInvokeExpr= require('../nodes/MethodInvokeExpression');
+var Stat = require('../nodes/Statement');
+var ThisRefExpr = new require('../nodes/ThisReferenceExpression');
+var TypeRefExpr = new require('../nodes/TypeReferenceExpression');
 var helper = require('../transformerHelper');
 
 /**
@@ -14,19 +17,25 @@ module.exports = function(compilationUnit) {
     compilationUnit.topLevelDeclarations
         .filter(decl => decl instanceof ClassDeclaration && decl.continuousFlow)
         .forEach(cls => {
-            var companionMethods = cls.members.filter(mem => !mem.isMain()).map(member => {
+            var companionMethods = cls.members
+                .filter(member => !member.isMain())
+                .map(member => {
                 var nextMethod = cls.getNextMember(member);
+
                 var companion = new MethodMember(
                     helper.translateMethodNameToCompanionMethodName(member.name),
                     utils.removeUndefinedEntries([
-                        new MethodInvokeExpression(member),
-                        nextMethod? new MethodInvokeExpression(new RawExpression(`${nextMethod._parent.name}.${helper.translateMethodNameToCompanionMethodName(nextMethod.name)}`)) : undefined //we cannot use here findCompanion method because we are creating companion right now
-                    ]),
+                        new Stat(new MethodInvokeExpr(new TypeRefExpr(member._parent), member.name)),
+                        nextMethod? new Stat(new MethodInvokeExpr(new TypeRefExpr(nextMethod._parent), helper.translateMethodNameToCompanionMethodName(nextMethod.name))) : undefined
+                    ])
+                    ,
                     true
                 );
 
                 companion._shadow = true; //won't be found by 'nextMethod' class
                 companion._parent = cls;
+
+                member.bindCompanion(companion);
                 return companion;
             });
 

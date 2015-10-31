@@ -4,7 +4,7 @@ var utils = require('../../utils');
 var nodes = require('../nodes');
 
 /**
- * Creates runner section
+ * Creates a runner section
  * if it exists and it's first then it does nothing
  * otherwise it renames it
  * @param {string} runnerSectionName

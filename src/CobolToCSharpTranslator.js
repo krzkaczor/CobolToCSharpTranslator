@@ -61,9 +61,7 @@ module.exports = class CobolToCSharpTranslator {
         var cobolAstMapper = new CobolAstMapper();
         var astCobol = cobolAstMapper.visit(tree);
 
-        //complete AST
         astCobol.bindWithParent();
-
 
         return astCobol;
     }
@@ -79,7 +77,8 @@ module.exports = class CobolToCSharpTranslator {
 
     getCSharpAst(input) {
         var ast = this.getCobolAstAndRewrite(input).toCSharp();
-        ast.bindWithParent(); //TODO: it can be rewritter
+        ast.bindWithParent();
+        ast.act('analyze');
 
         var rewrittenAst = this.cSharpRewritters.reduce((ast, rewriter) => rewriter(ast), ast);
 
