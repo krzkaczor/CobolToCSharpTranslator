@@ -1,11 +1,13 @@
 var _ = require('lodash');
 
 var cobolNodes = require('../cobol/nodes/index');
-var csharpNodes = require('./../csharp/nodes/index');
-var TypeRefExpr = csharpNodes.TypeReferenceExpression;
-var CobolTypeRefExpr = csharpNodes.CobolTypeReferenceExpression;
-var Stat = csharpNodes.Statement;
-var MethodInvokeExpr = csharpNodes.MethodInvokeExpression;
+var csNodes = require('./../csharp/nodes/index');
+var TypeRefExpr = csNodes.TypeReferenceExpression;
+var CobolTypeRefExpr = csNodes.CobolTypeReferenceExpression;
+var Stat = csNodes.Statement;
+var MethodInvokeExpr = csNodes.MethodInvokeExpression;
+var AssignStat = csNodes.AssignStatement;
+var PrimitiveExpr = csNodes.PrimitiveExpression;
 
 var helper = require('./../csharp/transformerHelper');
 var CsharpRuntime = require('./../csharp/Runtime');
@@ -18,7 +20,7 @@ cobolNodes.CompilationUnit.prototype.toCSharp = function () {
 
     var classes = _.flatten([dataDivison, procedureDivision]);
 
-    return new csharpNodes.CompilationUnit(['System', 'System.Linq'], classes);
+    return new csNodes.CompilationUnit(['System', 'System.Linq'], classes);
 };
 
 cobolNodes.DataDivision.prototype.toCSharp = function () {
@@ -35,14 +37,14 @@ cobolNodes.ProcedureDivision.prototype.toCSharp = function () {
 };
 
 cobolNodes.Section.prototype.toCSharp = function () {
-    return new csharpNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs)).bindWithCounterpart(this);
+    return new csNodes.ClassDeclaration(this.name, helper.allToCSharp(this.paragraphs)).bindWithCounterpart(this);
 };
 
 cobolNodes.Paragraph.prototype.toCSharp = function () {
     //flatten all sentences into one big array of C# statements
     var stats = _.flatten(this.sentences.map(sent => sent.statements));
 
-    return new csharpNodes.MethodMember(this.name, helper.allToCSharp(stats), true).bindWithCounterpart(this);
+    return new csNodes.MethodMember(this.name, helper.allToCSharp(stats), true).bindWithCounterpart(this);
 };
 
 cobolNodes.StopRunVerb.prototype.toCSharp = function () {
@@ -58,7 +60,7 @@ cobolNodes.PerformVerb.prototype.toCSharp = function () {
     if (this.times == 1) {
         return methodCall;
     } else {
-        return new csharpNodes.RawExpression(`Enumerable.Range(0, ${this.times}).ToList().ForEach(_ => ${this.target.name}());`);
+        return new csNodes.RawExpression(`Enumerable.Range(0, ${this.times}).ToList().ForEach(_ => ${this.target.name}());`);
     }
 };
 
@@ -68,11 +70,11 @@ cobolNodes.DisplayVerb.prototype.toCSharp = function () {
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function () {
-    return new csharpNodes.PrimitiveExpression(this.value);
+    return new csNodes.PrimitiveExpression(this.value);
 };
 
 cobolNodes.IntLiteral.prototype.toCSharp = function () {
-    return new csharpNodes.PrimitiveExpression(this.value);
+    return new csNodes.PrimitiveExpression(this.value);
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function () {
@@ -85,4 +87,12 @@ cobolNodes.AcceptVerb.prototype.toCSharp = function () {
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function () {
     return this.target.toCSharpString(); //@todo
+};
+
+cobolNodes.AddVerb.prototype.toCSharp = function() {
+    if (!this.components) {
+        return new AssignStat(this.target._csharpRef, new PrimitiveExpr(this.value), '+');
+    } else {
+        return new AssignStat(this.target._csharpRef, this.components.map(c => c._csharpRef).reduce((a, c) => new csNodes.OperatorCall('+', a, c)));
+    }
 };

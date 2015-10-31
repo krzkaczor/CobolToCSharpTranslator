@@ -66,6 +66,7 @@ statement
 	|   stopRunStat
 	|   moveStat
 	|   acceptStat
+	|   addStat
 	;
 
 stopRunStat
@@ -82,6 +83,11 @@ moveStat
 
 goToStat
 	:	'GO' 'TO' ID
+	;
+
+addStat
+	:	'ADD' NUMBER 'TO' ID #addToStat
+	|	'ADD' ID+ 'GIVING' ID #addGivingStat
 	;
 
 performStat

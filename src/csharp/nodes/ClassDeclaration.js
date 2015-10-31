@@ -14,9 +14,13 @@ module.exports = class ClassDeclaration extends Base {
         this.members = members;
     }
 
-    addMember(member: Base) {
-        this.members.push(member);
-        member._parent = this;
+    addMember(member: Base|Array<Base>) {
+        if (_.isArray(member)) {
+            member.forEach(mem => this.addMember(mem));
+        } else {
+            this.members.push(member);
+            member._parent = this;
+        }
     }
 
     getNextMember(member) {

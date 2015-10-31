@@ -3,7 +3,7 @@ var Base = require('./Base');
 var VariableReferenceExpression = require('./VariableReferenceExpression');
 
 module.exports = class ReturnStatement extends Base {
-    constructor(expr: VariableReferenceExpression) {
+    constructor(expr: Base) {
         super();
         this.expr = expr;
     }

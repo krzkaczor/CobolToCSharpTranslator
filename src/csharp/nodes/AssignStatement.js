@@ -4,8 +4,9 @@ var PrimitiveExpression = require('./PrimitiveExpression');
 var OperatorCall = require('./OperatorCall');
 
 
-module.exports = class AssignStatement {
+module.exports = class AssignStatement extends Base {
     constructor(target: Base, value: Base, modifier: string = '') {
+        super();
         this.target = target;
         this.value = value;
         this.modifier = modifier;
