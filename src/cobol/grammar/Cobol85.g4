@@ -65,10 +65,15 @@ statement
 	|   performStat
 	|   stopRunStat
 	|   moveStat
+	|   acceptStat
 	;
 
 stopRunStat
 	:	'STOP' 'RUN'
+	;
+
+acceptStat
+	:	'ACCEPT' ID
 	;
 
 moveStat

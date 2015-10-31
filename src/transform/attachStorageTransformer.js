@@ -154,6 +154,18 @@ cobolNodes.GroupItem.prototype.toCSharpAssignment = function (what) {
     return new Stat(new MethodInvokeExpr(this._csharpRef, 'Load', [what.toCSharp()]));
 };
 
+cobolNodes.ElementaryItem.prototype.toCSharpKeyboardLoader= function (what) {
+    let expr = new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), 'ReadLine');
+    if (this.picture.type == 'int') {
+        expr = new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Int32), 'Parse', [expr]);
+    }
+    return new AssignmentStat(this._csharpRef, expr);
+};
+
+cobolNodes.GroupItem.prototype.toCSharpKeyboardLoader = function (what) {
+    return new Stat(new MethodInvokeExpr(this._csharpRef, 'LoadFromKeyboard'));
+};
+
 cobolNodes.GroupItem.prototype.toCSharpString = function () {
     return this._csharpRef;
 };

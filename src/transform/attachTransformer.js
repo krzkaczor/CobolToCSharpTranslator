@@ -79,6 +79,10 @@ cobolNodes.MoveVerb.prototype.toCSharp = function () {
     return this.target.toCSharpAssignment(this.what);
 };
 
+cobolNodes.AcceptVerb.prototype.toCSharp = function () {
+    return this.target.toCSharpKeyboardLoader();
+};
+
 cobolNodes.SymbolExpression.prototype.toCSharp = function () {
     return this.target.toCSharpString(); //@todo
 };
