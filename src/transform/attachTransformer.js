@@ -68,11 +68,11 @@ cobolNodes.DisplayVerb.prototype.toCSharp = function () {
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function () {
-    return new csharpNodes.PrimitiveExpression('"{0}"'.format(this.value));
+    return new csharpNodes.PrimitiveExpression(this.value);
 };
 
 cobolNodes.IntLiteral.prototype.toCSharp = function () {
-    return new csharpNodes.PrimitiveExpression('{0}'.format(this.value));
+    return new csharpNodes.PrimitiveExpression(this.value);
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function () {
@@ -80,5 +80,5 @@ cobolNodes.MoveVerb.prototype.toCSharp = function () {
 };
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function () {
-    return this.target.toCSharpString();
+    return this.target.toCSharpString(); //@todo
 };

@@ -31,14 +31,15 @@ module.exports = class Base {
         return actOnNodes(this, ...arguments);
     }
 
-    bindWithCounterpart(counterPart) {
-        this._cobolRef = counterPart;
-        counterPart._csharpRef = this;
+    bindWithCounterpart(counterPart: CobolBase) {
+        this.bindToCobol(counterPart);
+        counterPart.bindToCSharp(this);
+
         return this;
     }
 
-    fromCobol(cobolOrigin: CobolBase) {
-        this._cobolOrigin = cobolOrigin;
+    bindToCobol(cobolOrigin: CobolBase) {
+        this._cobolRef = cobolOrigin;
         return this;
     }
 

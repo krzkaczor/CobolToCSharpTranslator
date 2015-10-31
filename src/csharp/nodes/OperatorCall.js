@@ -10,6 +10,6 @@ module.exports = class OperatorCall extends Base {
     }
 
     toSource() {
-        return `${this.left.toSource()} ${this.operator} ${this.right.toSource()};`;
+        return `${this.left.toSource()} ${this.operator} ${this.right.toSource()}`;
     }
 };

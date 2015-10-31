@@ -27,11 +27,14 @@ module.exports = class MethodMember extends Base {
             stats.push(new Stat(new MethodInvokeExpr(new TypeRefExpr(companion._parent), companion.name)));
         }
 
-        return 'public {0} {1} {2} {3}() {\n{4}}\n'.format(
+        var parameters = this.options.parameters || [];
+
+        return 'public {0} {1} {2} {3}({4}) {\n{5}}\n'.format(
             this.options.override? 'override' : '',
             this.isStatic ? 'static ' : '',
             type,
             this.name,
+            this.allToSource(parameters).join(','),
             this.allToSource(stats).join('\n')
         );
     }

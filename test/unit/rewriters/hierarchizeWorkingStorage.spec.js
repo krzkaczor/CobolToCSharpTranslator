@@ -12,11 +12,13 @@ var GroupItem = function(lvl, name) {
     this.level = lvl;
     this.name = name;
     this.children = [];
+    this.picture = {};
 };
 
 var ElementaryItem = function(lvl, name) {
     this.level = lvl;
     this.name = name;
+    this.picture = {};
 };
 
 describe('Hierarchize working storage ', function () {

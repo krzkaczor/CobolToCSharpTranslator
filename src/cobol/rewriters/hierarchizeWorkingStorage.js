@@ -9,7 +9,7 @@ var GroupItem = function(lvl, v) {
     this.value = v;
     this.children = [];
 };
-GroupItem.prototype.addDataItem= function(child) {
+GroupItem.prototype.addDataItem = function(child) {
     this.children.push(child);
 };
 
@@ -35,6 +35,10 @@ module.exports = function(compilationUnit) {
             parent.children.push(head);
             head._parent = parent;
             hierarchize(head);
+        }
+        if (parent.children !== undefined) {
+            let size = parent.children.reduce((a,c) => a+c.picture.size, 0);
+            parent.picture = new nodes.Picture('string', size);
         }
     }
     var root = new GroupItem(0, 'ROOT');

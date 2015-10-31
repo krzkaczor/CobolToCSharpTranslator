@@ -29,4 +29,9 @@ module.exports = class Base {
     act() {
         return actOnNodes(this, ...arguments);
     }
+
+    bindToCSharp(csharpEl) {
+        this._csharpRef = csharpEl;
+        return this;
+    }
 };

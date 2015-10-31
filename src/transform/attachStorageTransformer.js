@@ -2,59 +2,119 @@ var _ = require('lodash');
 
 var cobolNodes = require('../cobol/nodes/index');
 var csharpNodes = require('./../csharp/nodes/index');
-var helper = require('./../csharp/transformerHelper');
 var CsharpRuntime = require('./../csharp/Runtime');
+var helper = require('./../csharp/transformerHelper');
+var Stat = csharpNodes.Statement;
+var AssignStat = csharpNodes.AssignStatement;
+var TypeRefExpr = csharpNodes.TypeReferenceExpression;
+var AssignmentStat = csharpNodes.AssignStatement;
+var MemberAccessExpr = csharpNodes.MemberAccessExpression;
+var MethodInvokeExpr = csharpNodes.MethodInvokeExpression;
+var ParameterDecl = csharpNodes.ParameterDeclaration;
+var PrimitiveExpr = csharpNodes.PrimitiveExpression;
+var ThisRefExpr = csharpNodes.ThisReferenceExpression;
+var VariableRefExpr = csharpNodes.VariableReferenceExpression;
 
-function translateChildren(classes, correspondingClass:csharpNodes.ClassDeclaration, children:Array, makeStatic:?boolean = false, genToString:?boolean = false) {
+function generateLoaderMethod(children) {
+    var cursor = 0;
+
+    var stats = children.map(child => {
+        let stat;
+        let expr = new MethodInvokeExpr(new VariableRefExpr('inputData'), 'Substring', [new PrimitiveExpr(cursor), new PrimitiveExpr(child.picture.size)]);
+        if (child.picture.type == 'int') {
+            expr = new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Int32), 'Parse', [expr]);
+        }
+
+        if (child instanceof cobolNodes.ElementaryItem) {
+            stat = new AssignmentStat(
+                new MemberAccessExpr(new ThisRefExpr(), child.name),
+                expr
+            );
+        }
+
+        if (child instanceof cobolNodes.GroupItem) {
+            stat = new Stat(new MethodInvokeExpr(
+                new MemberAccessExpr(new ThisRefExpr(), child.name),
+                'Load',
+                [expr]
+            ));
+        }
+
+        cursor += child.picture.size;
+        return stat;
+    });
+
+    return new csharpNodes.MethodMember('Load', stats, false, {
+        parameters: [new ParameterDecl(new TypeRefExpr(CsharpRuntime.string), 'inputData')]
+    });
+}
+
+function generateLoadFromKeyboardMethod() {
+    let inputVariable = new VariableRefExpr('inputFromKeyboard');
+    let stats = [
+        new csharpNodes.VariableDeclaration(inputVariable, new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), 'ReadLine')),
+        new Stat(new MethodInvokeExpr(new ThisRefExpr(), 'Load', [inputVariable]))
+    ];
+
+    return new csharpNodes.MethodMember('LoadFromKeyboard', stats, false);
+}
+
+function translateChildren(classes, correspondingClass:csharpNodes.ClassDeclaration, children:Array, makeStatic: ?boolean = false, genToString: ?boolean = false, genLoader: ?boolean = false, genLoadFromKeyboardMethod: ?boolean = false) {
     children.forEach(child => {
         if (child instanceof cobolNodes.GroupItem) {
-            correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], makeStatic, new csharpNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).fromCobol(child));
+            correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], makeStatic, new csharpNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).bindToCobol(child));
         } else {
-            correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CsharpRuntime[child.picture.type], makeStatic).fromCobol(child));
+            correspondingClass.addMember(new csharpNodes.AttributeMember(child.name, CsharpRuntime[child.picture.type], makeStatic).bindToCobol(child));
         }
     });
 
-    //generate loader for each member
+    if (genLoader) {
+        correspondingClass.addMember(generateLoaderMethod(children));
+    }
 
+    if (genLoadFromKeyboardMethod) {
+        correspondingClass.addMember(generateLoadFromKeyboardMethod(children));
+    }
 
     if (genToString) {
-        var sinkVariable = new csharpNodes.SymbolExpression('description');
+        var sinkVariable = new VariableRefExpr('description');
 
         var stats = [];
         stats.push(new csharpNodes.VariableDeclaration(sinkVariable, new csharpNodes.RawExpression('""')));
 
         stats.push(...children.map(child => {
             if (child instanceof cobolNodes.GroupItem) {
-                return new csharpNodes.OperatorCall('+=', sinkVariable, new csharpNodes.RawExpression(`${child.name}`));
+                return new AssignStat(sinkVariable, new csharpNodes.RawExpression(`${child.name}`), '+');
             }
 
             if (child.picture.type === 'int') {
-                return new csharpNodes.OperatorCall('+=', sinkVariable, new csharpNodes.RawExpression(`${child.name}.ToString("D${child.picture.size}")`));
+                return new AssignStat(sinkVariable, new csharpNodes.RawExpression(`${child.name}.ToString("D${child.picture.size}")`), '+');
             }
 
             if (child.picture.type === 'string') {
-                return new csharpNodes.OperatorCall('+=', sinkVariable, new csharpNodes.RawExpression(`${child.name}.PadRight(${child.picture.size})`));
+                return new AssignStat(sinkVariable, new csharpNodes.RawExpression(`${child.name}.PadRight(${child.picture.size})`), '+');
             }
         }));
 
         stats.push(new csharpNodes.ReturnStatement(sinkVariable));
 
-        correspondingClass.addMember(new csharpNodes.MethodMember("ToString", stats, false, {returnType: new csharpNodes.SymbolExpression('string'), override: true}));
+        correspondingClass.addMember(new csharpNodes.MethodMember("ToString", stats, false, {
+            returnType: new TypeRefExpr(CsharpRuntime.string),
+            override: true
+        }));
     }
 }
 
 function createCSharpRefs(currentRef, nextItem) {
-    if (!nextItem || !nextItem._cobolOrigin) return;
-    if (!currentRef) {
-        currentRef = nextItem;
-    }
-    nextItem._cobolOrigin.csharpRef = currentRef;
+    if (!nextItem || !nextItem._cobolRef) return;
+
+    nextItem._cobolRef._csharpRef = currentRef;
     if (nextItem.members) {
         nextItem.members.forEach(mem => {
-            if (mem._cobolOrigin instanceof cobolNodes.GroupItem) {
-                createCSharpRefs(new csharpNodes.MemberAccess(currentRef, mem), mem._type);
+            if (mem._cobolRef instanceof cobolNodes.GroupItem) {
+                createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem._type);
             } else {
-                createCSharpRefs(new csharpNodes.MemberAccess(currentRef, mem), mem);
+                createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem);
             }
         });
     }
@@ -66,50 +126,48 @@ cobolNodes.WorkingStorageSection.prototype.toCSharp = function () {
     var groupItems = _.values(globalScope.data).filter(g => g instanceof cobolNodes.GroupItem);
 
     var classes = _.chain(groupItems)
-        .map(group => new csharpNodes.ClassDeclaration(helper.translateDataItemName(group.name)).fromCobol(group))
+        .map(group => new csharpNodes.ClassDeclaration(helper.translateDataItemName(group.name)).bindToCobol(group))
         .indexBy('name')
         .run();
 
     groupItems.forEach(group => {
         var correspondingClass = classes[helper.translateDataItemName(group.name)];
 
-        translateChildren(classes, correspondingClass, group.children, false, true);
+        translateChildren(classes, correspondingClass, group.children, false, true, true, true);
     });
 
     var dataStore = new csharpNodes.ClassDeclaration('DataStore');
-    dataStore.fromCobol(this);
+    dataStore.bindWithCounterpart(this);
     translateChildren(classes, dataStore, this.variables, true);
 
     //bind cobol elements to dataStore attributes
-    createCSharpRefs(dataStore, dataStore);
+    createCSharpRefs(new TypeRefExpr(dataStore), dataStore);
 
     return _.flatten([_.values(classes), dataStore]);
 };
 
-cobolNodes.ElementaryItem.prototype.toCSharpAssignment = function(what) {
-  return new csharpNodes.AssignmentOperator(this.csharpRef, what.toCSharp());
+cobolNodes.ElementaryItem.prototype.toCSharpAssignment = function (what) {
+    return new AssignStat(this._csharpRef, what.toCSharp());
 };
 
-cobolNodes.GroupItem.prototype.toCSharpAssignment = function(what) {
-    //todo: refactor member accesow
-    var target = new csharpNodes.RawExpression(`${this.csharpRef.toSource()}.load`);
-    return new csharpNodes.MethodInvokeExpression(target, [what.toCSharp()]);
+cobolNodes.GroupItem.prototype.toCSharpAssignment = function (what) {
+    return new Stat(new MethodInvokeExpr(this._csharpRef, 'Load', [what.toCSharp()]));
 };
 
-cobolNodes.GroupItem.prototype.toCSharpString = function() {
-    return this.csharpRef;
+cobolNodes.GroupItem.prototype.toCSharpString = function () {
+    return this._csharpRef;
 };
 
-cobolNodes.ElementaryItem.prototype.toCSharpString = function() {
+cobolNodes.ElementaryItem.prototype.toCSharpString = function () {
     if (this.picture.type === 'int') {
         return new csharpNodes.RawExpression(
-            this.csharpRef.toSource() + "." + 'ToString' + `("D${this.picture.size}")`
+            this._csharpRef.toSource() + "." + 'ToString' + `("D${this.picture.size}")`
         );
     }
 
     if (this.picture.type === 'string') {
         return new csharpNodes.RawExpression(
-            this.csharpRef.toSource() + "." + `PadRight(${this.picture.size})`
+            this._csharpRef.toSource() + "." + `PadRight(${this.picture.size})`
         );
     }
-}
+};

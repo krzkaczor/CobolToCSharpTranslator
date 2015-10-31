@@ -1,9 +1,9 @@
 var _ = require('lodash');
 var Base = require('./Base');
-var SymbolExpression = require('./SymbolExpression');
+var VariableReferenceExpression = require('./VariableReferenceExpression');
 
 module.exports = class VariableDeclaration extends Base {
-    constructor(variable: SymbolExpression, initializer: ?Base, type: ?string = 'var') {
+    constructor(variable: VariableReferenceExpression, initializer: ?Base, type: ?string = 'var') {
         super();
         this.variable = variable;
         this.initializer = initializer;
