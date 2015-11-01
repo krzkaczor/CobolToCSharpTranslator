@@ -1,9 +1,10 @@
 var _ = require('lodash');
 var Base = require('./Base');
 var ClassDeclaration = require('./ClassDeclaration');
+var TypeRefExpr = require('./TypeReferenceExpression');
 
 module.exports = class AttributeMember extends Base {
-    constructor(name: string, type: ClassDeclaration, isStatic: ?boolean = false, initializer: ?Base) {
+    constructor(name: string, type: TypeRefExpr, isStatic: ?boolean = false, initializer: ?Base) {
         super();
         this.name = name;
         this._type = type;
@@ -12,6 +13,6 @@ module.exports = class AttributeMember extends Base {
     }
 
     toSource() {
-        return `public ${this.isStatic?'static' : ''} ${this._type.name} ${this.name} ${this.initializer? ' = ' + this.initializer.toSource() : ''};`;
+        return `public ${this.isStatic?'static' : ''} ${this._type.toSource()} ${this.name} ${this.initializer? ' = ' + this.initializer.toSource() : ''};`;
     }
 };

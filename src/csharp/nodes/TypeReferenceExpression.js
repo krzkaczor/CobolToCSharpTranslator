@@ -4,10 +4,10 @@ var Base = require('./Base');
 module.exports = class TypeReferenceExpression extends Base {
     constructor(type: Base){
         super();
-        this._cobolType = type;
+        this._type = type;
     }
 
     toSource() {
-        return this._cobolType.name;
+        return this._type.name;
     }
 };

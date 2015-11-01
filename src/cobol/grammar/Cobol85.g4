@@ -27,7 +27,7 @@ workingStorageSection
 	;
 
 variableDeclaration
-	:   NUMBER ID picture DOT   #elementaryVariableDecl
+	:   NUMBER ID picture initializer? DOT   #elementaryVariableDecl
 	|   NUMBER ID DOT           #groupVariableDecl
 	;
 
@@ -36,6 +36,10 @@ picture
 	:	'PIC' (ID|NUMBER)                     #verbosePicture
 	|   'PIC' (ID|NUMBER) '(' NUMBER ')'      #numberPicture
 	;
+
+initializer
+    :   'VALUE' 'ZEROS'
+    ;
 
 procedureDivision
 	:	'PROCEDURE' 'DIVISION' DOT
@@ -63,6 +67,7 @@ statement
 	:	displayStat
 	|   goToStat
 	|   performStat
+	|   performUntilStat
 	|   stopRunStat
 	|   moveStat
 	|   acceptStat
@@ -95,15 +100,25 @@ performStat
 	|   'PERFORM' ID NUMBER 'TIMES' #performTimesStat
 	;
 
+performUntilStat
+    :   'PERFORM' 'UNTIL' booleanExpression statement+ 'END-PERFORM'
+    ;
+
 displayStat
-	:	'DISPLAY' expr #advancingDisplayStat
-	|   'DISPLAY' expr 'WITH NO ADVANCING'? #noAdvancingDisplayStat
+	:	'DISPLAY' expr+ #advancingDisplayStat
+	|   'DISPLAY' expr+ 'WITH NO ADVANCING'? #noAdvancingDisplayStat
 	;
 
 expr
 	:	literal #literalExpr
 	| 	ID #symbolExpr
 	;
+
+booleanExpression
+    :   literal      #literalBoolExpr
+    |   ID           #symbolBoolExpr
+    |   booleanExpression '=' booleanExpression #equalivenceBoolExpr
+    ;
 
 literal
 	:	STRING #stringLiteral
@@ -114,7 +129,7 @@ NUMBER : [0-9]+;
 
 ID : [a-zA-Z0-9]+;
 
-STRING : QUOTE [a-zA-Z0-9 ]+ QUOTE;
+STRING : QUOTE [a-zA-Z0-9=. ]+ QUOTE;
 
 DOT : '.';
 

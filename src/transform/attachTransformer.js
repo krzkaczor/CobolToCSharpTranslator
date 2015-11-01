@@ -66,7 +66,7 @@ cobolNodes.PerformVerb.prototype.toCSharp = function () {
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function () {
     var printFunction = this.advancing ? 'WriteLine' : 'Write';
-    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), printFunction, [this.what.toCSharp()]));
+    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), printFunction, [ this.what.map(w=>w.toCSharp()).reduce((a, c) => new csNodes.OperatorCall('+', a, c))]));
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function () {

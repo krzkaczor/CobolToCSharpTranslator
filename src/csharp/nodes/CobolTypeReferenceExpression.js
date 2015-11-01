@@ -9,11 +9,11 @@ var TypeRefExpr = require('./TypeReferenceExpression');
 module.exports = class CobolTypeReferenceExpression extends Base {
     constructor(type: CobolBase){
         super();
-        this._cobolType = type;
+        this._type = type;
     }
 
     analyze() {
-        this._csharpTypeRefExpr = new TypeRefExpr(this._cobolType._csharpRef);
+        this._csharpTypeRefExpr = new TypeRefExpr(this._type._csharpRef);
     }
 
     toSource() {

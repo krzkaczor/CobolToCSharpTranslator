@@ -59,7 +59,7 @@ function generateLoadFromKeyboardMethod() {
     return new csNodes.MethodMember('LoadFromKeyboard', stats, false);
 }
 
-function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Picture, isStatic: boolean) {
+function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Picture, isStatic: boolean, clear) {
     var backingFieldName = '_'+name;
     var getter = [
         new csNodes.ReturnStatement(new VariableRefExpr(backingFieldName))
@@ -81,7 +81,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     }
 
     return [
-        new csNodes.AttributeMember(backingFieldName, csRuntime[picture.type], isStatic),
+        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type]), isStatic, clear? new csNodes.PrimitiveExpression(0) : undefined),
         new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type]), isStatic, getter, setter)
     ];
 }
@@ -89,9 +89,9 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
 function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration, children:Array, makeStatic: ?boolean = false, genToString: ?boolean = false, genLoader: ?boolean = false, genLoadFromKeyboardMethod: ?boolean = false) {
     children.forEach(child => {
         if (child instanceof cobolNodes.GroupItem) {
-            correspondingClass.addMember(new csNodes.AttributeMember(child.name, classes[helper.translateDataItemName(child.name)], makeStatic, new csNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).bindToCobol(child));
+            correspondingClass.addMember(new csNodes.AttributeMember(child.name, new TypeRefExpr(classes[helper.translateDataItemName(child.name)]), makeStatic, new csNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).bindToCobol(child));
         } else {
-            correspondingClass.addMember(generatePropertyForElementaryItem(child.name, child.picture, makeStatic).map(p => p.bindWithCounterpart(child)));
+            correspondingClass.addMember(generatePropertyForElementaryItem(child.name, child.picture, makeStatic, child.clear).map(p => p.bindWithCounterpart(child)));
         }
     });
 
@@ -139,7 +139,7 @@ function createCSharpRefs(currentRef, nextItem) {
     if (nextItem.members) {
         nextItem.members.forEach(mem => {
             if (mem._cobolRef instanceof cobolNodes.GroupItem) {
-                createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem._type);
+                createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem._type._type);
             } else {
                 createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem);
             }
