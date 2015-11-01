@@ -16,3 +16,10 @@ exports.translateDataItemReference = function (dataItem) {
 exports.translateMethodNameToCompanionMethodName = function(methodName: string) {
     return methodName + 'AndContinue';
 };
+
+exports.translateCobolBooleanOperator = function(cobolOp: string) {
+    switch(cobolOp) {
+        case '=': return '==';
+        default: return cobolOp;
+    }
+};

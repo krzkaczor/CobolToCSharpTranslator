@@ -66,7 +66,11 @@ cobolNodes.PerformVerb.prototype.toCSharp = function () {
 
 cobolNodes.DisplayVerb.prototype.toCSharp = function () {
     var printFunction = this.advancing ? 'WriteLine' : 'Write';
-    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), printFunction, [ this.what.map(w=>w.toCSharp()).reduce((a, c) => new csNodes.OperatorCall('+', a, c))]));
+    return new Stat(new MethodInvokeExpr(new TypeRefExpr(CsharpRuntime.Console), printFunction, [
+        this.what
+            .map(w => w instanceof cobolNodes.SymbolExpression? w.toCSharpString() : w.toCSharp())
+            .reduce((a, c) => new csNodes.BinaryOperatorCall('+', a, c))
+    ]));
 };
 
 cobolNodes.StringLiteral.prototype.toCSharp = function () {
@@ -86,13 +90,25 @@ cobolNodes.AcceptVerb.prototype.toCSharp = function () {
 };
 
 cobolNodes.SymbolExpression.prototype.toCSharp = function () {
-    return this.target.toCSharpString(); //@todo
+    return this.target._csharpRef;
+};
+
+cobolNodes.SymbolExpression.prototype.toCSharpString = function () {
+    return this.target.toCSharpString();
 };
 
 cobolNodes.AddVerb.prototype.toCSharp = function() {
     if (!this.components) {
         return new AssignStat(this.target._csharpRef, new PrimitiveExpr(this.value), '+');
     } else {
-        return new AssignStat(this.target._csharpRef, this.components.map(c => c._csharpRef).reduce((a, c) => new csNodes.OperatorCall('+', a, c)));
+        return new AssignStat(this.target._csharpRef, this.components.map(c => c._csharpRef).reduce((a, c) => new csNodes.BinaryOperatorCall('+', a, c)));
     }
+};
+
+cobolNodes.PerformUntilVerb.prototype.toCSharp = function() {
+    return new csNodes.WhileStatement(new csNodes.UnaryOperatorCall('!', this.condition.toCSharp()), new csNodes.Block(helper.allToCSharp(this.stats)));
+};
+
+cobolNodes.BooleanOperatorCall.prototype.toCSharp = function() {
+    return new csNodes.BinaryOperatorCall(helper.translateCobolBooleanOperator(this.operator), this.left.toCSharp(), this.right.toCSharp());
 };

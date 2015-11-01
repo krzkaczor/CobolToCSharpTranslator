@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var Base = require('./Base');
 var PrimitiveExpression = require('./PrimitiveExpression');
-var OperatorCall = require('./OperatorCall');
 
 
 module.exports = class AssignStatement extends Base {

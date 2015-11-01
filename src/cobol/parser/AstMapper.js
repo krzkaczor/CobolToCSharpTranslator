@@ -143,6 +143,18 @@ module.exports = class AstMapper extends CobolVisitor {
         return new nodes.DisplayVerb(this.visit(ctx.expr()), false);
     }
 
+    visitPerformUntilStat(ctx) {
+        return new nodes.PerformUntilVerb(this.visit(ctx.booleanExpression()), this.visit(ctx.statement()));
+    }
+
+    visitSymbolBoolExpr(ctx) {
+        return new nodes.SymbolExpression(ctx.ID().getText());
+    }
+
+    visitEqualivenceBoolExpr(ctx) {
+        return new nodes.BooleanOperatorCall('=', ...this.visit(ctx.booleanExpression()));
+    }
+
     visitStringLiteral(ctx) {
         //toFIX - grammar should be tweeked stringLiteral: QUOTE STRING QUOTE
         var text = ctx.getText();

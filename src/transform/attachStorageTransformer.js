@@ -70,7 +70,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     let valueRef = new VariableRefExpr('value');
     if (picture.type == 'int') {
         setter = [
-            new csNodes.IfStatement(new csNodes.OperatorCall('<=', valueRef, new csNodes.PrimitiveExpression(parseInt('9'.repeat(picture.size)))),
+            new csNodes.IfStatement(new csNodes.BinaryOperatorCall('<=', valueRef, new csNodes.PrimitiveExpression(parseInt('9'.repeat(picture.size)))),
                 new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef)
             )
         ]

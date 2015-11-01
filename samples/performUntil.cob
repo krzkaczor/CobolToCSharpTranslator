@@ -1,0 +1,13 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID.  PerformFormat3.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 i PIC 9 VALUE ZEROS.
+
+PROCEDURE DIVISION.
+   Begin.
+       PERFORM UNTIL i = 5
+         DISPLAY "Counter value: " i
+         ADD 1 TO i
+       END-PERFORM
+       DISPLAY "Looping finished".
