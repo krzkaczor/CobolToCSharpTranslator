@@ -17,7 +17,7 @@ var loadCobolProgram = function(fullPath) {
 };
 
 var loadInputConfigForCobolProgram = function(cobolProgram) {
-    var inputDescriptionFile = cobolProgram.replace('cob', 'json'); //fix
+    var inputDescriptionFile = cobolProgram.replace(/cob$/, 'json');
     if (fs.existsSync(inputDescriptionFile)) {
         var inputConfig = JSON.parse(fs.readFileSync(inputDescriptionFile).toString());
 
