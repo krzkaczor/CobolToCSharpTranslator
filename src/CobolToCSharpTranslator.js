@@ -30,7 +30,10 @@ function loadPostprocessor(name) {
 
 module.exports = class CobolToCSharpTranslator {
     constructor() {
-        this.preprocessors = [loadPreprocessor('removeMicrofocusDirectives')];
+        this.preprocessors = [
+            loadPreprocessor('removeMicrofocusDirectives'),
+            loadPreprocessor('removeComments')
+        ];
 
         this.cobolRewritters = [
             loadCobolRewritter('createRunnerSection').bind(undefined, 'Runner'),
