@@ -38,7 +38,8 @@ picture
 	;
 
 initializer
-    :   'VALUE' 'ZEROS'
+    :   'VALUE' 'ZEROS' #zeroInit
+    |   'VALUE' literal #literalInit
     ;
 
 procedureDivision
