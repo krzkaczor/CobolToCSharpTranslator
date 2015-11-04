@@ -51,8 +51,12 @@ module.exports = class AstMapper extends CobolVisitor {
         return this.visit(ctx.literal());
     }
 
+    visitConditionalNameDecl(ctx) {
+        return new nodes.ConditionalNameItem(ctx.ID().getText(), ctx.literal());
+    }
+
     visitElementaryVariableDecl(ctx) {
-        return new nodes.ElementaryItem(parseInt(ctx.NUMBER().getText()), ctx.ID().getText(), this.visit(ctx.picture()), this.visit(ctx.initializer()));
+        return new nodes.ElementaryItem(parseInt(ctx.NUMBER().getText()), ctx.ID().getText(), this.visit(ctx.picture()), ctx.initializer()?this.visit(ctx.initializer()):undefined);
     }
 
     visitVerbosePicture(ctx) {
@@ -125,6 +129,10 @@ module.exports = class AstMapper extends CobolVisitor {
     visitAddGivingStat(ctx) {
         var ids = ctx.ID().map(id => id.getText()).reverse();
         return new nodes.AddVerb(_.head(ids), _.tail(ids).reverse());
+    }
+
+    visitMultiplyByStat(ctx) {
+        return new nodes.MultiplyVerb(ctx.children[3].getText(), ctx.children[1].getText());
     }
 
     visitPerformSingleStat(ctx) {

@@ -1,0 +1,18 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID.  Factorial.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 n PIC 99 VALUE ZEROS.
+01 i PIC 99 VALUE 1.
+01 factorial PIC 99999 VALUE 1.
+
+PROCEDURE DIVISION.
+        ACCEPT n.
+
+        PERFORM UNTIL i > n
+            MULTIPLY i BY factorial
+            ADD 1 TO i
+        END-PERFORM
+
+        DISPLAY "FACTORIAL FOR " n " is :" factorial.
+        STOP RUN.

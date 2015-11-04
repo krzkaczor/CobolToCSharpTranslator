@@ -105,6 +105,10 @@ cobolNodes.AddVerb.prototype.toCSharp = function() {
     }
 };
 
+cobolNodes.MultiplyVerb.prototype.toCSharp = function() {
+    return new AssignStat(this.target._csharpRef, this.components.map(c => c._csharpRef).reduce((a, c) => new csNodes.BinaryOperatorCall('*', a, c)), '*'); //@todo
+};
+
 cobolNodes.PerformUntilVerb.prototype.toCSharp = function() {
     return new csNodes.WhileStatement(new csNodes.UnaryOperatorCall('!', this.condition.toCSharp()), new csNodes.Block(helper.allToCSharp(this.stats)));
 };

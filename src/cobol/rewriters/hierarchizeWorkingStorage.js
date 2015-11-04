@@ -36,7 +36,7 @@ module.exports = function(compilationUnit) {
             head._parent = parent;
             hierarchize(head);
         }
-        if (parent.children !== undefined) {
+        if (parent instanceof nodes.GroupItem) {
             let size = parent.children.reduce((a,c) => a+c.picture.size, 0);
             parent.picture = new nodes.Picture('string', size);
         }

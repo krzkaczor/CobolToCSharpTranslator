@@ -8,5 +8,6 @@ module.exports = class ElementaryItem extends Base {
         this.name = name;
         this.picture = picture;
         this.init = init;
+        this.children = [];
     }
 };

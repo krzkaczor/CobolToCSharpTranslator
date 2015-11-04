@@ -27,7 +27,8 @@ workingStorageSection
 	;
 
 variableDeclaration
-	:   NUMBER ID picture initializer? DOT   #elementaryVariableDecl
+	:   '88' ID 'VALUE' literal+ DOT   #conditionalNameDecl
+	|   NUMBER ID picture initializer? DOT   #elementaryVariableDecl
 	|   NUMBER ID DOT           #groupVariableDecl
 	;
 
@@ -74,6 +75,7 @@ statement
 	|   acceptStat
 	|   ifStat
 	|   addStat
+	|   multiplyStat
 	;
 /*todo: ughhhh*/
 statement2
@@ -105,6 +107,10 @@ goToStat
 addStat
 	:	'ADD' NUMBER 'TO' ID #addToStat
 	|	'ADD' ID+ 'GIVING' ID #addGivingStat
+	;
+
+multiplyStat
+	:	'MULTIPLY' (NUMBER | ID) 'BY' ID #multiplyByStat
 	;
 
 performStat
