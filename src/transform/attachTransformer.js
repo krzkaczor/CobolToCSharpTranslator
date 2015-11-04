@@ -112,3 +112,7 @@ cobolNodes.PerformUntilVerb.prototype.toCSharp = function() {
 cobolNodes.BooleanOperatorCall.prototype.toCSharp = function() {
     return new csNodes.BinaryOperatorCall(helper.translateCobolBooleanOperator(this.operator), this.left.toCSharp(), this.right.toCSharp());
 };
+
+cobolNodes.IfStatement.prototype.toCSharp = function() {
+    return new csNodes.IfStatement(this.condition.toCSharp(), new csNodes.Block(helper.allToCSharp(this.trueStatements)), this.falseStatements? new csNodes.Block(helper.allToCSharp(this.falseStatements)) : undefined);
+};

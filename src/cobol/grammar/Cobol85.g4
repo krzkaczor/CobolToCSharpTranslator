@@ -71,8 +71,19 @@ statement
 	|   stopRunStat
 	|   moveStat
 	|   acceptStat
+	|   ifStat
 	|   addStat
 	;
+/*todo: ughhhh*/
+statement2
+    :   statement
+    ;
+
+ifStat
+    :   'IF' booleanExpression 'THEN' sentence #ifThenStat
+    |   'IF' booleanExpression 'THEN' statement* 'END-IF' #ifThenEndIfStat
+    |   'IF' booleanExpression 'THEN' statement* 'ELSE' statement2* 'END-IF' #ifElseStat
+    ;
 
 stopRunStat
 	:	'STOP' 'RUN'
@@ -117,7 +128,7 @@ expr
 booleanExpression
     :   literal      #literalBoolExpr
     |   ID           #symbolBoolExpr
-    |   booleanExpression '=' booleanExpression #equalivenceBoolExpr
+    |   booleanExpression ('=' | '>' | '<' | '<=' | '>=') booleanExpression #operatorBoolExpr
     ;
 
 literal
