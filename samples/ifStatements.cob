@@ -10,12 +10,11 @@ PROCEDURE DIVISION.
         DISPLAY "i equals 9".
 
     IF i > 0 THEN
-       DISPLAY "dupa"
        IF i = 1 THEN
            DISPLAY "EXACTLY 1"
            DISPLAY "BINGO"
        ELSE
-           IF i < 2 THEN
+           IF i >= 2 THEN
                DISPLAY "Greater or eq 2"
        END-IF
     END-IF.
