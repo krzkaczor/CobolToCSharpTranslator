@@ -59,19 +59,47 @@ function generateLoadFromKeyboardMethod() {
     return new csNodes.MethodMember('LoadFromKeyboard', stats, false);
 }
 
-function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Picture, isStatic: boolean, init: ?cobolNodes.Base) {
+function conditionalNameUpdate(conditionalNameItem: cobolNodes.ConditionalNameItem) {
+    let valueRef = new VariableRefExpr('value');
+    let boolExpression;
+
+    if (!conditionalNameItem.thru) {
+        boolExpression = conditionalNameItem.values
+            .map(val => new csNodes.BinaryOperatorCall('==', valueRef, val.toCSharp()))
+            .reduce((expr, next) => new csNodes.BinaryOperatorCall('||', expr, next));
+    } else {
+        boolExpression = new csNodes.BinaryOperatorCall('&&',
+            new csNodes.BinaryOperatorCall('>=', valueRef, conditionalNameItem.values[0].toCSharp()),
+            new csNodes.BinaryOperatorCall('<=', valueRef, conditionalNameItem.values[1].toCSharp())
+        );
+    }
+
+    return new AssignmentStat(new VariableRefExpr(conditionalNameItem.name), boolExpression);
+}
+
+function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Picture, isStatic: boolean, init: ?cobolNodes.Base, child: cobolNodes.Base, conditionalNameItems: Array<cobolNodes.Base>) {
     var backingFieldName = '_'+name;
     var getter = [
         new csNodes.ReturnStatement(new VariableRefExpr(backingFieldName))
     ];
 
+    var conditionalNameItemsAttributes = conditionalNameItems.map(cond =>
+        new csNodes.AttributeMember(cond.name, new TypeRefExpr(csRuntime['bool'])).bindWithCounterpart(cond)
+    );
+
     var setter;
 
     let valueRef = new VariableRefExpr('value');
     if (picture.type == 'int') {
+        var trueStats = [
+            new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef),
+            ...conditionalNameItems.map(conditionalNameUpdate)
+        ];
+
+
         setter = [
             new csNodes.IfStatement(new csNodes.BinaryOperatorCall('<=', valueRef, new csNodes.PrimitiveExpression(parseInt('9'.repeat(picture.size)))),
-                new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef)
+                new csNodes.Block(trueStats)
             )
         ]
     } else {
@@ -81,8 +109,9 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     }
 
     return [
-        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type]), isStatic, init? init.toCSharp() : undefined),
-        new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type]), isStatic, getter, setter)
+        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type]), isStatic, init? init.toCSharp() : undefined).bindWithCounterpart(child),
+        new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type]), isStatic, getter, setter).bindWithCounterpart(child),
+        ...conditionalNameItemsAttributes
     ];
 }
 
@@ -91,7 +120,7 @@ function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration,
         if (child instanceof cobolNodes.GroupItem) {
             correspondingClass.addMember(new csNodes.AttributeMember(child.name, new TypeRefExpr(classes[helper.translateDataItemName(child.name)]), makeStatic, new csNodes.RawExpression("new " + helper.translateDataItemName(child.name) + "()")).bindToCobol(child));
         } else {
-            correspondingClass.addMember(generatePropertyForElementaryItem(child.name, child.picture, makeStatic, child.init).map(p => p.bindWithCounterpart(child)));
+            correspondingClass.addMember(generatePropertyForElementaryItem(child.name, child.picture, makeStatic, child.init, child, child.children));
         }
     });
 
@@ -140,7 +169,7 @@ function createCSharpRefs(currentRef, nextItem) {
         nextItem.members.forEach(mem => {
             if (mem._cobolRef instanceof cobolNodes.GroupItem) {
                 createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem._type._type);
-            } else {
+            } else if (mem._cobolRef instanceof cobolNodes.ElementaryItem) {
                 createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem);
             }
         });

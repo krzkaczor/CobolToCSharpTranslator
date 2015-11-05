@@ -4,6 +4,7 @@ module.exports = {
     int : new ClassDeclaration('int'),
     Int32 : new ClassDeclaration('Int32'),
     string  : new ClassDeclaration('string'),
+    bool  : new ClassDeclaration('bool'),
 
     Console : new ClassDeclaration('Console'),
     //this should be a namespace

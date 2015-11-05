@@ -1,23 +1,24 @@
 IDENTIFICATION DIVISION.
-PROGRAM-ID.  AcceptAndDisplay.
-
+PROGRAM-ID.  Factorial.
 DATA DIVISION.
 WORKING-STORAGE SECTION.
-01 StudentDetails.
-   02  StudentId       PIC 9(7).
-   02  StudentName.
-       03 Surname      PIC X(9).
-       03 Initials     PIC XX.
-   02  CourseCode      PIC X(4).
-   02  Gender          PIC X.
+
+01 n PIC 99 VALUE ZEROS.
+01 i PIC 99 VALUE 1.
+    88 ONE VALUE 1.
+    88 TWO VALUE 2.
+    88 BELOWORFOUR VALUE 3, 4.
+    88 FIVEANDMORE VALUE 5 THRU 9.
+    88 OVER9 VALUE 10 THROUGH 99.
+
 
 PROCEDURE DIVISION.
-Begin.
-    MOVE 123456 TO StudentId.
-    MOVE "KrzysztofKK" TO StudentName.
-    MOVE "ABCD" TO CourseCode.
-    MOVE "M" TO Gender.
-    DISPLAY StudentDetails.
-    DISPLAY Surname.
-    DISPLAY StudentId.
+    MOVE 1 TO i.
+    *> EVALUATE TRUE
+        *> WHEN ONE DISPLAY "ONE!"
+        *> WHEN TWO DISPLAY "TWO!"
+        *> WHEN BELOW-OR-FOUR DISPLAY "BELOW OR EQ FOUR"
+        *> WHEN FIVE-AND-MORE DISPLAY "FIVE-AND-MORE"
+        *> WHEN OVER-9 DISPLAY "OVER-9"
+    *> END-EVALUATE.
     STOP RUN.

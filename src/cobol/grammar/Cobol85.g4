@@ -26,8 +26,13 @@ workingStorageSection
 	 	variableDeclaration*
 	;
 
+literalList
+    : (literal ',')* literal
+    ;
+
 variableDeclaration
-	:   '88' ID 'VALUE' literal+ DOT   #conditionalNameDecl
+	:   '88' ID 'VALUE' literalList DOT   #conditionalNameDecl
+	|   '88' ID 'VALUE' literal ('THRU'|'THROUGH') literal DOT   #conditionalNameThruDecl
 	|   NUMBER ID picture initializer? DOT   #elementaryVariableDecl
 	|   NUMBER ID DOT           #groupVariableDecl
 	;
@@ -145,7 +150,7 @@ literal
 
 NUMBER : [0-9]+;
 
-ID : [a-zA-Z0-9]+;
+ID : [a-zA-Z0-9-]+;
 
 STRING : QUOTE [a-zA-Z0-9=:. ]+ QUOTE;
 

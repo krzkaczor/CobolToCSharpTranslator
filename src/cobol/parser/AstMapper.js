@@ -51,8 +51,16 @@ module.exports = class AstMapper extends CobolVisitor {
         return this.visit(ctx.literal());
     }
 
+    visitLiteralList(ctx) {
+        return this.visit(ctx.literal());
+    }
+
     visitConditionalNameDecl(ctx) {
-        return new nodes.ConditionalNameItem(ctx.ID().getText(), ctx.literal());
+        return new nodes.ConditionalNameItem(ctx.ID().getText(), this.visit(ctx.literalList()));
+    }
+
+    visitConditionalNameThruDecl(ctx) {
+        return new nodes.ConditionalNameItem(ctx.ID().getText(), this.visit(ctx.literal()), true);
     }
 
     visitElementaryVariableDecl(ctx) {
