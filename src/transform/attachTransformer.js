@@ -120,3 +120,9 @@ cobolNodes.BooleanOperatorCall.prototype.toCSharp = function() {
 cobolNodes.IfStatement.prototype.toCSharp = function() {
     return new csNodes.IfStatement(this.condition.toCSharp(), new csNodes.Block(helper.allToCSharp(this.trueStatements)), this.falseStatements? new csNodes.Block(helper.allToCSharp(this.falseStatements)) : undefined);
 };
+
+cobolNodes.EvaluateStatement.prototype.toCSharp = function() {
+    return this.whenCases.reduceRight((acc, caze) => {
+        return new csNodes.IfStatement(caze.condition.toCSharp(), new csNodes.Block(helper.allToCSharp(caze.statements)), acc);
+    }, undefined);
+};

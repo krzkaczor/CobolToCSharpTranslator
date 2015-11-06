@@ -1,5 +1,10 @@
+var _ = require('lodash');
+
+/**
+ * Translates whole array of cobol stats to C#. Flattens output array.
+ */
 exports.allToCSharp = function(arr) {
-    return arr.map(e => e.toCSharp());
+    return _.flatten(arr.map(e => e.toCSharp()));
 };
 
 exports.translateDataItemName = function(name) {

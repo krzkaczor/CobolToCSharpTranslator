@@ -21,7 +21,6 @@ var loadInputConfigForCobolProgram = function(cobolProgram) {
     if (fs.existsSync(inputDescriptionFile)) {
         var inputConfig = JSON.parse(fs.readFileSync(inputDescriptionFile).toString());
 
-        console.log("creating stream");
         var Stream = require('stream');
         var stream = new Stream();
 

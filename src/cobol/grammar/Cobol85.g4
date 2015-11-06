@@ -81,7 +81,9 @@ statement
 	|   ifStat
 	|   addStat
 	|   multiplyStat
+	|   evaluateStat
 	;
+
 /*todo: ughhhh*/
 statement2
     :   statement
@@ -118,6 +120,16 @@ multiplyStat
 	:	'MULTIPLY' (NUMBER | ID) 'BY' ID #multiplyByStat
 	;
 
+evaluateStat
+    :   'EVALUATE' 'TRUE'
+            whenCase+
+        'END-EVALUATE'
+    ;
+
+whenCase
+    :   'WHEN' booleanExpression statement+
+    ;
+
 performStat
 	:	'PERFORM' ID #performSingleStat
 	|   'PERFORM' ID NUMBER 'TIMES' #performTimesStat
@@ -152,7 +164,7 @@ NUMBER : [0-9]+;
 
 ID : [a-zA-Z0-9-]+;
 
-STRING : QUOTE [a-zA-Z0-9=:. ]+ QUOTE;
+STRING : QUOTE [a-zA-Z0-9=:.! ]+ QUOTE;
 
 DOT : '.';
 

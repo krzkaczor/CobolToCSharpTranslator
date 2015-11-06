@@ -84,7 +84,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     ];
 
     var conditionalNameItemsAttributes = conditionalNameItems.map(cond =>
-        new csNodes.AttributeMember(cond.name, new TypeRefExpr(csRuntime['bool'])).bindWithCounterpart(cond)
+        new csNodes.AttributeMember(cond.name, new TypeRefExpr(csRuntime['bool']), isStatic).bindWithCounterpart(cond)
     );
 
     var setter;
@@ -169,7 +169,7 @@ function createCSharpRefs(currentRef, nextItem) {
         nextItem.members.forEach(mem => {
             if (mem._cobolRef instanceof cobolNodes.GroupItem) {
                 createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem._type._type);
-            } else if (mem._cobolRef instanceof cobolNodes.ElementaryItem) {
+            } else if (mem._cobolRef) {
                 createCSharpRefs(new MemberAccessExpr(currentRef, mem.name), mem);
             }
         });
