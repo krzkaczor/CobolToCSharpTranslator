@@ -123,6 +123,6 @@ cobolNodes.IfStatement.prototype.toCSharp = function() {
 
 cobolNodes.EvaluateStatement.prototype.toCSharp = function() {
     return this.whenCases.reduceRight((acc, caze) => {
-        return new csNodes.IfStatement(caze.condition.toCSharp(), new csNodes.Block(helper.allToCSharp(caze.statements)), acc);
+        return new csNodes.IfStatement(this.lookingForTrue?caze.condition.toCSharp():new csNodes.UnaryOperatorCall('!', caze.condition.toCSharp()), new csNodes.Block(helper.allToCSharp(caze.statements)), acc);
     }, undefined);
 };

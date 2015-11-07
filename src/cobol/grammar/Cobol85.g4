@@ -121,7 +121,7 @@ multiplyStat
 	;
 
 evaluateStat
-    :   'EVALUATE' 'TRUE'
+    :   'EVALUATE' ('TRUE' | 'FALSE')
             whenCase+
         'END-EVALUATE'
     ;

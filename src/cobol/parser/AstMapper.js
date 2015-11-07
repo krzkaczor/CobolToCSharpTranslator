@@ -64,7 +64,7 @@ module.exports = class AstMapper extends CobolVisitor {
     }
 
     visitEvaluateStat(ctx) {
-        return new nodes.EvaluateStatement(this.visit(ctx.whenCase()));
+        return new nodes.EvaluateStatement(ctx.children[1].getText(), this.visit(ctx.whenCase()));
     }
 
     visitWhenCase(ctx) {
