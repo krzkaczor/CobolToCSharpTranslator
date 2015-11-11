@@ -111,13 +111,19 @@ goToStat
 	:	'GO' 'TO' ID
 	;
 
+varOrNumber
+    :   numericLiteral
+    |   variableRef
+    ;
+
 addStat
-	:	'ADD' NUMBER 'TO' ID #addToStat
-	|	'ADD' ID+ 'GIVING' ID #addGivingStat
+	:	'ADD' varOrNumber 'TO' ID #addToStat
+	|	'ADD' varOrNumber+ 'GIVING' ID #addGivingStat
 	;
 
 multiplyStat
-	:	'MULTIPLY' (NUMBER | ID) 'BY' ID #multiplyByStat
+	:	'MULTIPLY' varOrNumber 'BY' ID #multiplyByStat
+	|	'MULTIPLY' varOrNumber 'BY' varOrNumber 'GIVING' ID #multiplyByGivingStat
 	;
 
 evaluateStat
@@ -156,9 +162,21 @@ booleanExpression
     ;
 
 literal
-	:	STRING #stringLiteral
-	|   NUMBER #numericLiteral
+	:	stringLiteral
+	|   numericLiteral
 	;
+
+stringLiteral
+    :   STRING
+    ;
+
+numericLiteral
+    :   NUMBER
+    ;
+
+variableRef
+    :   ID
+    ;
 
 NUMBER : [0-9]+;
 

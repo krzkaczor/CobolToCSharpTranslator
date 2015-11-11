@@ -139,16 +139,22 @@ module.exports = class AstMapper extends CobolVisitor {
     }
 
     visitAddToStat(ctx) {
-        return new nodes.AddVerb(ctx.ID().getText(), parseInt(ctx.NUMBER().getText()));
+        var targetName = ctx.ID().getText();
+        return new nodes.AddVerb(targetName, [new nodes.SymbolExpression(targetName), this.visit(ctx.varOrNumber())] );
     }
 
     visitAddGivingStat(ctx) {
-        var ids = ctx.ID().map(id => id.getText()).reverse();
-        return new nodes.AddVerb(_.head(ids), _.tail(ids).reverse());
+        return new nodes.AddVerb(ctx.ID().getText(), this.visit(ctx.varOrNumber()));
     }
 
     visitMultiplyByStat(ctx) {
-        return new nodes.MultiplyVerb(ctx.children[3].getText(), ctx.children[1].getText());
+        var targetName = ctx.ID().getText();
+        return new nodes.MultiplyVerb(targetName, [new nodes.SymbolExpression(targetName), this.visit(ctx.varOrNumber())]);
+    }
+
+    visitMultiplyByGivingStat(ctx) {
+        var targetName = ctx.ID().getText();
+        return new nodes.MultiplyVerb(targetName, this.visit(ctx.varOrNumber()));
     }
 
     visitPerformSingleStat(ctx) {
@@ -173,6 +179,10 @@ module.exports = class AstMapper extends CobolVisitor {
 
     visitNoAdvancingDisplayStat(ctx) {
         return new nodes.DisplayVerb(this.visit(ctx.expr()), false);
+    }
+
+    visitVariableRef(ctx) {
+        return new nodes.SymbolExpression(ctx.ID().getText());
     }
 
     visitPerformUntilStat(ctx) {
