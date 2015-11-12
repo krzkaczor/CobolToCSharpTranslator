@@ -21,17 +21,27 @@ var loadInputConfigForCobolProgram = function(cobolProgram) {
     if (fs.existsSync(inputDescriptionFile)) {
         var inputConfig = JSON.parse(fs.readFileSync(inputDescriptionFile).toString());
 
-        var Stream = require('stream');
-        var stream = new Stream();
-
-        stream.pipe = function(dest) {
-            inputConfig.input.forEach(function(line){dest.write(line+'\n');});
-            return dest;
-        };
-        return stream;
+        return inputConfig;
     }
 
     return undefined;
+};
+
+var createStreamsFromInputConfig = function(inputString) {
+    var Stream = require('stream');
+    var originStream = new Stream();
+
+    originStream.pipe = function(dest) {
+        inputString.forEach(function(line){dest.write(line+'\n');});
+        return dest;
+    };
+
+    var streamA = new Stream.PassThrough();
+    var streamB = new Stream.PassThrough();
+    originStream.pipe(streamA);
+    originStream.pipe(streamB);
+
+    return [streamA, streamB];
 };
 
 /**
@@ -71,5 +81,6 @@ module.exports = {
     loadCobolProgram: loadCobolProgram,
     loadInputConfigForCobolProgram: loadInputConfigForCobolProgram,
     runCobol: runCobol,
-    normalizeCobolOutput: normalizeCobolOutput
-}
+    normalizeCobolOutput: normalizeCobolOutput,
+    createStreamsFromInputConfig: createStreamsFromInputConfig
+};

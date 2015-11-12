@@ -1,20 +1,26 @@
 var fs = require('fs');
 var path = require('path');
 
+var program = require('commander');
+
 var CobolToCSharpTranslator = require('./CobolToCSharpTranslator');
 
-const SAMPLES_PATH = require('./PROJECT_DIRS').samples;
+program
+    .version('1.0.0')
+    .usage('[options] file')
+    .option('-o, --output [path]', 'output file [path]')
+    .parse(process.argv);
 
-var cobolProgram = fs.readFileSync(path.join(SAMPLES_PATH, 'nextFeature.cob')).toString();
 
-//var cobolAst = new CobolToCSharpTranslator().getCobolAst(cobolProgram);
-//console.log(require('util').inspect(cobolAst, false, 10));
-
-//var cobolAst = new CobolToCSharpTranslator().getCobolAstAndRewrite(cobolProgram);
-//console.log(require('util').inspect(cobolAst, false, 10));
-
-//var csharpAst = new CobolToCSharpTranslator().getCSharpAst(cobolProgram);
-//console.log(require('util').inspect(csharpAst, false, 10));
-
+var inputFile = program.args[0];
+var cobolProgram = fs.readFileSync(inputFile).toString();
 var csharpCode = new CobolToCSharpTranslator().getCSharpCode(cobolProgram);
-console.log(csharpCode);
+
+if (!program.output) {
+    console.log(csharpCode);
+} else {
+    var outputFile = program.output;
+    fs.writeFileSync(outputFile, csharpCode);
+}
+
+process.exit(0);

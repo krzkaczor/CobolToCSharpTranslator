@@ -1,5 +1,4 @@
 {
-  "input": [
-    "9"
-  ]
+  "should compute factorial": ["9"],
+  "should compute zero factorial": ["0"]
 }

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "babel-core": "^5.8.25",
+    "commander": "^2.9.0",
     "edge": "^0.10.1",
     "grunt-cli": "^0.1.13",
     "jison": "^0.4.15",

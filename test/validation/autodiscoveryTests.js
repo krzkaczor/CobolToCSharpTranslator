@@ -9,6 +9,7 @@ var ValidationTestHelpers = require('./ValidationTestHelpers');
 var runCSharp = require('node-csharp');
 var loadCobolProgram = ValidationTestHelpers.loadCobolProgram;
 var loadInputConfigForCobolProgram = ValidationTestHelpers.loadInputConfigForCobolProgram;
+var createStreamsFromInputConfig = ValidationTestHelpers.createStreamsFromInputConfig;
 var runCobol = ValidationTestHelpers.runCobol;
 
 var CobolToCSharpTranslator = require('../../dist/CobolToCSharpTranslator');
@@ -49,28 +50,37 @@ function makeTest(file, fullPath) {
     }
 
     //should be duplicated
-    var inputStream = loadInputConfigForCobolProgram(fullPath);
-    var inputStream2 = loadInputConfigForCobolProgram(fullPath);
+    var inputConfig = loadInputConfigForCobolProgram(fullPath);
+
+    if (!inputConfig) {
+        inputConfig = { 'should print the same output':[] };
+    }
 
     describe(file + ' tests:', function () {
-        it('should print the same output', function (done) {
-            var cobolProgram = loadCobolProgram(fullPath);
-            var translatedProgram = cobolToCSharpTranslator.getCSharpCode(cobolProgram);
+        _.forOwn(inputConfig, function(input, testCase) {
+            var streams = createStreamsFromInputConfig(input);
+            var cobolInputStream = streams[0];
+            var csInputStream = streams[1];
 
-            var cobolResultPromise = runCobol(cobolProgram, inputStream);
-            var cSharpResultPromise = runCSharp.fromString(translatedProgram, {stdin:inputStream2});
+            it(testCase, function (done) {
+                var cobolProgram = loadCobolProgram(fullPath);
+                var translatedProgram = cobolToCSharpTranslator.getCSharpCode(cobolProgram);
 
-            Q.all([cobolResultPromise, cSharpResultPromise]).then(function (res) {
-                var cobolResult = ValidationTestHelpers.normalizeCobolOutput(res[0]);
-                var cSharpResult = ValidationTestHelpers.normalizeCobolOutput(res[1]);
+                var cobolResultPromise = runCobol(cobolProgram, cobolInputStream);
+                var cSharpResultPromise = runCSharp.fromString(translatedProgram, {stdin:csInputStream});
 
-                expect(cobolResult).to.be.equal(cSharpResult);
+                Q.all([cobolResultPromise, cSharpResultPromise]).then(function (res) {
+                    var cobolResult = ValidationTestHelpers.normalizeCobolOutput(res[0]);
+                    var cSharpResult = ValidationTestHelpers.normalizeCobolOutput(res[1]);
 
-                console.log("Test run successfully\n");
-                done();
-            }).catch(function (err) {
-                console.log(err);
-                assert.fail(err);
+                    expect(cobolResult).to.be.equal(cSharpResult);
+
+                    console.log("Test run successfully\n");
+                    done();
+                }).catch(function (err) {
+                    console.log(err);
+                    assert.fail(err);
+                });
             });
         });
     });

@@ -1,5 +1,5 @@
 {
-  "input": [
+  "should accept proper values": [
     "123",
     "KaczorKK",
     "123",
