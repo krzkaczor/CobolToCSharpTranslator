@@ -147,6 +147,17 @@ module.exports = class AstMapper extends CobolVisitor {
         return new nodes.AddVerb(ctx.ID().getText(), this.visit(ctx.varOrNumber()));
     }
 
+    visitSubtractToStat(ctx) {
+        var targetName = ctx.ID().getText();
+        return new nodes.SubtractVerb(targetName, new nodes.SymbolExpression(targetName), this.visit(ctx.varOrNumber()));
+    }
+
+    visitSubtractGivingStat(ctx) {
+        var components = this.visit(ctx.varOrNumber());
+        var reversedComponents = components.reverse();
+        return new nodes.SubtractVerb(ctx.ID().getText(), _.head(reversedComponents), (_.tail(reversedComponents)).reverse());
+    }
+
     visitMultiplyByStat(ctx) {
         var targetName = ctx.ID().getText();
         return new nodes.MultiplyVerb(targetName, [new nodes.SymbolExpression(targetName), this.visit(ctx.varOrNumber())]);

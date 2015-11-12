@@ -80,6 +80,7 @@ statement
 	|   acceptStat
 	|   ifStat
 	|   addStat
+	|   subtractStat
 	|   multiplyStat
 	|   evaluateStat
 	;
@@ -119,6 +120,11 @@ varOrNumber
 addStat
 	:	'ADD' varOrNumber 'TO' ID #addToStat
 	|	'ADD' varOrNumber+ 'GIVING' ID #addGivingStat
+	;
+
+subtractStat
+	:	'SUBTRACT' varOrNumber+ 'FROM' ID #subtractToStat
+	|	'SUBTRACT' varOrNumber+ 'FROM' varOrNumber 'GIVING' ID #subtractGivingStat
 	;
 
 multiplyStat

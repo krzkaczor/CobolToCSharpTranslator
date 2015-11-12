@@ -121,6 +121,27 @@ cobolNodes.AddVerb.prototype.toCSharp = function() {
     return createStatementForArithmeticExpression.call(this, '+', csNodes.IncrementExpression);
 };
 
+cobolNodes.SubtractVerb.prototype.toCSharp = function() {
+    let operator = '-';
+    let shortcut = csNodes.DecrementExpression;
+    var targets = this.components.filter(comp => comp instanceof cobolNodes.Base).map(comp => comp.target);
+
+    if (targets.includes(this.from)) {
+        let components = helper.allToCSharp(this.components.filter(comp => comp.target != this.target));
+        if (shortcut && components.length == 1 && components[0].primitive === 1) {
+            return new Stat(new shortcut(this.target._csharpRef));
+        }
+
+        let componentsExpression = components.reduce((a, c) => new csNodes.BinaryOperatorCall('+', a, c));
+
+        return new AssignStat(this.target._csharpRef, componentsExpression, operator);
+    } else {
+        let components = helper.allToCSharp(this.components);
+        let componentsExpression = components.reduce((a, c) => new csNodes.BinaryOperatorCall('+', a, c));
+
+        return new AssignStat(this.target._csharpRef, new csNodes.BinaryOperatorCall('-', this.from.toCSharp(), componentsExpression));
+    }};
+
 cobolNodes.MultiplyVerb.prototype.toCSharp = function() {
     return createStatementForArithmeticExpression.call(this, '*');
 };
