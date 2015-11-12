@@ -97,28 +97,28 @@ cobolNodes.SymbolExpression.prototype.toCSharpString = function () {
     return this.target.toCSharpString();
 };
 
-function createStatementForArithmeticExpression(operator: string, shortcut: ?csNodes.Base) {
-    var targets = this.components.filter(comp => comp instanceof cobolNodes.Base).map(comp => comp.target);
+function createStatementForArithmeticExpression(target, allComponents: Array, operator: string, shortcut: ?csNodes.Base) {
+    var targets = allComponents.filter(comp => comp instanceof cobolNodes.Base).map(comp => comp.target);
 
-    if (targets.includes(this.target)) {
-        let components = helper.allToCSharp(this.components.filter(comp => comp.target != this.target));
+    if (targets.includes(target)) {
+        let components = helper.allToCSharp(allComponents.filter(comp => comp.target != target));
         if (shortcut && components.length == 1 && components[0].primitive === 1) {
-            return new Stat(new shortcut(this.target._csharpRef));
+            return new Stat(new shortcut(target._csharpRef));
         }
 
         let componentsExpression = components.reduce((a, c) => new csNodes.BinaryOperatorCall(operator, a, c));
 
-        return new AssignStat(this.target._csharpRef, componentsExpression, operator);
+        return new AssignStat(target._csharpRef, componentsExpression, operator);
     } else {
-        let components = helper.allToCSharp(this.components);
+        let components = helper.allToCSharp(allComponents);
         let componentsExpression = components.reduce((a, c) => new csNodes.BinaryOperatorCall(operator, a, c));
 
-        return new AssignStat(this.target._csharpRef, componentsExpression);
+        return new AssignStat(target._csharpRef, componentsExpression);
     }
 }
 
 cobolNodes.AddVerb.prototype.toCSharp = function() {
-    return createStatementForArithmeticExpression.call(this, '+', csNodes.IncrementExpression);
+    return createStatementForArithmeticExpression(this.target, this.components, '+', csNodes.IncrementExpression);
 };
 
 cobolNodes.SubtractVerb.prototype.toCSharp = function() {
@@ -140,10 +140,19 @@ cobolNodes.SubtractVerb.prototype.toCSharp = function() {
         let componentsExpression = components.reduce((a, c) => new csNodes.BinaryOperatorCall('+', a, c));
 
         return new AssignStat(this.target._csharpRef, new csNodes.BinaryOperatorCall('-', this.from.toCSharp(), componentsExpression));
-    }};
+    }
+};
 
 cobolNodes.MultiplyVerb.prototype.toCSharp = function() {
-    return createStatementForArithmeticExpression.call(this, '*');
+    return createStatementForArithmeticExpression(this.target, this.components, '*');
+};
+
+cobolNodes.DivideVerb.prototype.toCSharp = function() {
+    var divideTransform = createStatementForArithmeticExpression(this.target, this.components, '/');
+    if(this.remainder) {
+        var remainderTransform = createStatementForArithmeticExpression(this.remainder, this.components, '%');
+    }
+    return _.compact([divideTransform, remainderTransform]);
 };
 
 cobolNodes.PerformUntilVerb.prototype.toCSharp = function() {

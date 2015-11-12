@@ -82,6 +82,7 @@ statement
 	|   addStat
 	|   subtractStat
 	|   multiplyStat
+	|   divideStat
 	|   evaluateStat
 	;
 
@@ -130,6 +131,11 @@ subtractStat
 multiplyStat
 	:	'MULTIPLY' varOrNumber 'BY' ID #multiplyByStat
 	|	'MULTIPLY' varOrNumber 'BY' varOrNumber 'GIVING' ID #multiplyByGivingStat
+	;
+
+divideStat
+	:	'DIVIDE' varOrNumber 'INTO' ID #divideIntoStat
+	|	'DIVIDE' varOrNumber 'BY' varOrNumber 'GIVING' ID ('REMAINDER' ID)? #divideByGivingStat
 	;
 
 evaluateStat

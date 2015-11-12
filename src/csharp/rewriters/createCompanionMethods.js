@@ -24,7 +24,7 @@ module.exports = function(compilationUnit) {
 
                 var companion = new MethodMember(
                     helper.translateMethodNameToCompanionMethodName(member.name),
-                    utils.removeUndefinedEntries([
+                    _.compact([
                         new Stat(new MethodInvokeExpr(new TypeRefExpr(member._parent), member.name)),
                         nextMethod? new Stat(new MethodInvokeExpr(new TypeRefExpr(nextMethod._parent), helper.translateMethodNameToCompanionMethodName(nextMethod.name))) : undefined
                     ])

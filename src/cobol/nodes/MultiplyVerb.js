@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var Base = require('./Base');
 
-//todo: proper implementation - we need to support passing ints and array of string
 module.exports = class MultiplyVerb extends Base {
     constructor(target: string, value: Array<Base>) {
         super();
