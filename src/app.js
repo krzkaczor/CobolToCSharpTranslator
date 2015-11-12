@@ -11,8 +11,11 @@ program
     .option('-o, --output [path]', 'output file [path]')
     .parse(process.argv);
 
-
 var inputFile = program.args[0];
+if (!inputFile) {
+    console.log("No input file");
+    process.exit(1);
+}
 var cobolProgram = fs.readFileSync(inputFile).toString();
 var csharpCode = new CobolToCSharpTranslator().getCSharpCode(cobolProgram);
 
