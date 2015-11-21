@@ -34,7 +34,7 @@ module.exports = function(grunt) {
         copy: {
             main: {
                 files: [
-                    {expand: true, cwd: 'src/', src: ['cobol/grammar/*'], dest: 'dist/'}
+                    {expand: true, cwd: 'src/', src: ['cobol/grammar/*', 'bridge/CobolRuntime.cs'], dest: 'dist/'}
                 ]
             }
         },

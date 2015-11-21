@@ -47,7 +47,7 @@ module.exports = class CobolToCSharpTranslator {
             loadCSharpRewritter('createCompanionMethods')
         ];
 
-        this.postprocessors = [loadPostprocessor('codeFormatter')];
+        this.postprocessors = [require('./bridge/CobolRuntime').attachRuntime, loadPostprocessor('codeFormatter')];
     }
 
     preprocessInput(input) {
