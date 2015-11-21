@@ -7,7 +7,7 @@ WORKING-STORAGE SECTION.
    02  StudentId       PIC 9(7).
    02  StudentName.
        03 Surname      PIC X(8).
-       03 Initials     PIC XX.
+       03 Initials     PIC AA.
    02  CourseCode      PIC X(4).
    02  Gender          PIC X.
 01 VER                 PIC X(10).

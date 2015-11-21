@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 var cobolNodes = require('../cobol/nodes/index');
+var CobolTypes= require('../cobol/CobolTypes');
 var csNodes = require('./../csharp/nodes/index');
 var csRuntime = require('./../csharp/Runtime');
 var helper = require('./../csharp/transformerHelper');
@@ -21,7 +22,7 @@ function generateLoaderMethod(children) {
     var stats = children.map(child => {
         let stat;
         let expr = new MethodInvokeExpr(new VariableRefExpr('inputData'), 'Substring', [new PrimitiveExpr(cursor), new PrimitiveExpr(child.picture.size)]);
-        if (child.picture.type == 'int') {
+        if (child.picture.type instanceof CobolTypes.Numeric) {
             expr = new MethodInvokeExpr(new TypeRefExpr(csRuntime.Int32), 'Parse', [expr]);
         }
 
@@ -90,7 +91,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     var setter;
 
     let valueRef = new VariableRefExpr('value');
-    if (picture.type == 'int') {
+    if (picture.type instanceof CobolTypes.Numeric) {
         var trueStats = [
             new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef),
             ...conditionalNameItems.map(conditionalNameUpdate)
@@ -109,8 +110,8 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     }
 
     return [
-        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type]), isStatic, init? init.toCSharp() : undefined).bindWithCounterpart(child),
-        new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type]), isStatic, getter, setter).bindWithCounterpart(child),
+        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, init? init.toCSharp() : undefined).bindWithCounterpart(child),
+        new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, getter, setter).bindWithCounterpart(child),
         ...conditionalNameItemsAttributes
     ];
 }
@@ -143,11 +144,11 @@ function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration,
                 return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}`), '+');
             }
 
-            if (child.picture.type === 'int') {
+            if (child.picture.type instanceof CobolTypes.Numeric) {
                 return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.ToString("D${child.picture.size}")`), '+');
             }
 
-            if (child.picture.type === 'string') {
+            if (child.picture.type instanceof CobolTypes.Alphanumeric || child.picture.type instanceof CobolTypes.Alphabetic) {
                 return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.PadRight(${child.picture.size})`), '+');
             }
         }));
@@ -212,7 +213,8 @@ cobolNodes.GroupItem.prototype.toCSharpAssignment = function (what) {
 
 cobolNodes.ElementaryItem.prototype.toCSharpKeyboardLoader= function (what) {
     let expr = new MethodInvokeExpr(new TypeRefExpr(csRuntime.Console), 'ReadLine');
-    if (this.picture.type == 'int') {
+
+    if (this.picture.type instanceof CobolTypes.Numeric) {
         expr = new MethodInvokeExpr(new TypeRefExpr(csRuntime.Int32), 'Parse', [expr]);
     }
     return new AssignmentStat(this._csharpRef, expr);
@@ -227,13 +229,13 @@ cobolNodes.GroupItem.prototype.toCSharpString = function () {
 };
 
 cobolNodes.ElementaryItem.prototype.toCSharpString = function () {
-    if (this.picture.type === 'int') {
+    if (this.picture.type instanceof CobolTypes.Numeric) {
         return new csNodes.RawExpression(
             this._csharpRef.toSource() + "." + 'ToString' + `("D${this.picture.size}")`
         );
     }
 
-    if (this.picture.type === 'string') {
+    if (this.picture.type instanceof CobolTypes.Alphanumeric || this.picture.type instanceof CobolTypes.Alphabetic) {
         return new csNodes.RawExpression(
             this._csharpRef.toSource() + "." + `PadRight(${this.picture.size})`
         );
