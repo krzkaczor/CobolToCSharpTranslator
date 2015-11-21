@@ -4,6 +4,7 @@ require('./polyfills');
 var fs = require('fs');
 var path = require('path');
 var csharpTransformer = require('./transform/attachTransformer');
+var typeBridge = require('./transform/typeBridge');
 
 var antlr4 = require('antlr4');
 var Cobol85Lexer = require('./cobol/parser/Cobol85Lexer').Cobol85Lexer;
