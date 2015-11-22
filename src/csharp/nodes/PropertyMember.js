@@ -15,8 +15,8 @@ module.exports = class PropertyMember extends Base {
 
     toSource() {
         return `public ${this.isStatic?'static' : ''} ${this._type.toSource()} ${this.name} {
-            get { ${this.allToSource(this.getter)} }
-            set { ${this.allToSource(this.setter)} }
+            get { ${this.allToSource(this.getter).join('\n')} }
+            set { ${this.allToSource(this.setter).join('\n')} }
         }`;
     }
 };

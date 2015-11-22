@@ -91,18 +91,15 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     var setter;
 
     let valueRef = new VariableRefExpr('value');
+    let backingFieldRef = new VariableRefExpr(backingFieldName);
     if (picture.type instanceof CobolTypes.Numeric) {
-        var trueStats = [
-            new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef),
+
+        setter = _.compact([
+            picture.type.generateSetterGuard(picture.size),
+            new AssignmentStat(backingFieldRef, valueRef),
+            picture.type.generateSetterTransformation(backingFieldRef),
             ...conditionalNameItems.map(conditionalNameUpdate)
-        ];
-
-
-        setter = [
-            new csNodes.IfStatement(new csNodes.BinaryOperatorCall('<=', valueRef, new csNodes.PrimitiveExpression(parseInt('9'.repeat(picture.size)))),
-                new csNodes.Block(trueStats)
-            )
-        ]
+        ]);
     } else {
         setter = [
             new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef)
