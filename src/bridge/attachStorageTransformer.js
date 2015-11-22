@@ -144,13 +144,7 @@ function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration,
                 return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}`), '+');
             }
 
-            if (child.picture.type instanceof CobolTypes.Numeric) {
-                return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.ToCobolString(${child.picture.size}, ${child.picture.type.signed})`), '+');
-            }
-
-            if (child.picture.type instanceof CobolTypes.Alphanumeric || child.picture.type instanceof CobolTypes.Alphabetic) {
-                return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.ToCobolString(${child.picture.size})`), '+');
-            }
+            return new AssignStat(sinkVariable, child.picture.type.toCobolString(child.name, child.picture.size), '+');
         }));
 
         stats.push(new csNodes.ReturnStatement(sinkVariable));
@@ -229,15 +223,5 @@ cobolNodes.GroupItem.prototype.toCSharpString = function () {
 };
 
 cobolNodes.ElementaryItem.prototype.toCSharpString = function () {
-    if (this.picture.type instanceof CobolTypes.Numeric) {
-        return new csNodes.RawExpression(
-            `${this._csharpRef.toSource()}.ToCobolString(${this.picture.size}, ${this.picture.type.signed})`
-        );
-    }
-
-    if (this.picture.type instanceof CobolTypes.Alphanumeric || this.picture.type instanceof CobolTypes.Alphabetic) {
-        return new csNodes.RawExpression(
-            `${this._csharpRef.toSource()}.ToCobolString(${this.picture.size})`
-        );
-    }
+    return this.picture.type.toCobolString(this._csharpRef.toSource(), this.picture.size);
 };
