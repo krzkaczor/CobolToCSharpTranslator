@@ -7,4 +7,7 @@ exports.Alphanumeric = class Alphanumeric {
 };
 
 exports.Numeric = class Numeric {
+    constructor({ signed = false } = {}) {
+        this.signed = signed;
+    }
 };

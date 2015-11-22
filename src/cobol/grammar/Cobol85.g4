@@ -188,9 +188,9 @@ variableRef
     :   ID
     ;
 
-NUMBER : [0-9]+;
+NUMBER : [-+]?[0-9]+;
 
-ID : [a-zA-Z0-9-]+;
+ID : [a-zA-Z0-9-_]+;
 
 STRING : QUOTE [a-zA-Z0-9=:.! ]+ QUOTE;
 

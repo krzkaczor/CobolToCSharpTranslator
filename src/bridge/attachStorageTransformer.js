@@ -21,7 +21,7 @@ function generateLoaderMethod(children) {
 
     var stats = children.map(child => {
         let stat;
-        let expr = new MethodInvokeExpr(new VariableRefExpr('inputData'), 'Substring', [new PrimitiveExpr(cursor), new PrimitiveExpr(child.picture.size)]);
+        let expr = new MethodInvokeExpr(new VariableRefExpr('inputData'), 'Substring', [new PrimitiveExpr(cursor), new PrimitiveExpr(child.picture.size || 0)]);
         if (child.picture.type instanceof CobolTypes.Numeric) {
             expr = new MethodInvokeExpr(new TypeRefExpr(csRuntime.Int32), 'Parse', [expr]);
         }
@@ -41,7 +41,7 @@ function generateLoaderMethod(children) {
             ));
         }
 
-        cursor += child.picture.size;
+        cursor += child.picture.size || 0;
         return stat;
     });
 
@@ -145,7 +145,7 @@ function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration,
             }
 
             if (child.picture.type instanceof CobolTypes.Numeric) {
-                return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.ToCobolString(${child.picture.size})`), '+');
+                return new AssignStat(sinkVariable, new csNodes.RawExpression(`${child.name}.ToCobolString(${child.picture.size}, ${child.picture.type.signed})`), '+');
             }
 
             if (child.picture.type instanceof CobolTypes.Alphanumeric || child.picture.type instanceof CobolTypes.Alphabetic) {
@@ -231,7 +231,7 @@ cobolNodes.GroupItem.prototype.toCSharpString = function () {
 cobolNodes.ElementaryItem.prototype.toCSharpString = function () {
     if (this.picture.type instanceof CobolTypes.Numeric) {
         return new csNodes.RawExpression(
-            `${this._csharpRef.toSource()}.ToCobolString(${this.picture.size})`
+            `${this._csharpRef.toSource()}.ToCobolString(${this.picture.size}, ${this.picture.type.signed})`
         );
     }
 

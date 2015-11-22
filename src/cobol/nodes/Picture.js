@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var Base = require('./Base');
-var TYPES = require('../CobolTypes');
+var CobolTypes = require('../CobolTypes');
 
 function unwrapPicString(picString) {
     var wrappedRegEx = /(.)\(([0-9]+)\)/;
@@ -18,18 +18,24 @@ module.exports = class Picture extends Base {
 
         //parse picture string
         var unwrappedPicString = unwrapPicString(picString);
-        this.size = unwrappedPicString.length;
-        if (_.contains(picString, 'A') || _.contains(picString, 'X')) {
+        if (_.contains(unwrappedPicString, 'A') || _.contains(unwrappedPicString, 'X')) {
+            this.size = unwrappedPicString.length;
+
             var typeChar = unwrappedPicString[0];
             let type;
             switch(typeChar) {
-                case 'A' : type = new TYPES.Alphabetic(); break;
-                case 'X' : type = new TYPES.Alphanumeric(); break;
+                case 'A' : type = new CobolTypes.Alphabetic(); break;
+                case 'X' : type = new CobolTypes.Alphanumeric(); break;
             }
             this.type = type;
-        }
-        if (picString[0] === '9') {
-            this.type = new TYPES.Numeric();
+        } else if (_.contains(unwrappedPicString, '9')) {
+            if (_.startsWith(unwrappedPicString, 'S')) {
+                this.size = unwrappedPicString.length - 1;
+                this.type = new CobolTypes.Numeric({signed: true});
+            } else {
+                this.size = unwrappedPicString.length;
+                this.type = new CobolTypes.Numeric();
+            }
         }
     }
 };

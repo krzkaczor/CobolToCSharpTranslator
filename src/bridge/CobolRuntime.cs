@@ -4,7 +4,12 @@ public static class CobolRuntimeExtensions
 		return str.PadRight(size);
 	}
 
-	public static string ToCobolString(this int num , int size) {
-		return num.ToString("D"+size);
+	public static string ToCobolString(this int num, int size, bool signed = false)
+	{
+		if (signed) {
+			return (num >= 0? "+" : "") + num.ToString ("D" + size);
+		} else {
+			return num.ToString ("D" + size);
+		}
 	}
 }
