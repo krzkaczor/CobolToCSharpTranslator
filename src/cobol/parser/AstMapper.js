@@ -203,16 +203,20 @@ module.exports = class AstMapper extends CobolVisitor {
         return new nodes.SymbolExpression(ctx.ID().getText());
     }
 
+    visitStatements(ctx) {
+        return this.visit(ctx.statement());
+    }
+
     visitIfThenStat(ctx) {
         return new nodes.IfStatement(this.visit(ctx.booleanExpression()), this.visit(ctx.sentence()).statements);
     }
 
     visitIfThenEndIfStat(ctx) {
-        return new nodes.IfStatement(this.visit(ctx.booleanExpression()), this.visit(ctx.statement()));
+        return new nodes.IfStatement(this.visit(ctx.booleanExpression()), this.visit(ctx.statements()));
     }
 
     visitIfElseStat(ctx) {
-        return new nodes.IfStatement(this.visit(ctx.booleanExpression()), this.visit(ctx.statement()), this.visit(ctx.statement2().map(s=>s.children[0])));
+        return new nodes.IfStatement(this.visit(ctx.booleanExpression()), ...this.visit(ctx.statements()));
     }
 
 

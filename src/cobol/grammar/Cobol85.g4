@@ -31,10 +31,10 @@ literalList
     ;
 
 variableDeclaration
-	:   '88' ID 'VALUE' literalList DOT   #conditionalNameDecl
+	:   '88' ID 'VALUE' literalList DOT                          #conditionalNameDecl
 	|   '88' ID 'VALUE' literal ('THRU'|'THROUGH') literal DOT   #conditionalNameThruDecl
-	|   NUMBER ID picture initializer? DOT   #elementaryVariableDecl
-	|   NUMBER ID DOT           #groupVariableDecl
+	|   NUMBER ID picture initializer? DOT                       #elementaryVariableDecl
+	|   NUMBER ID DOT                                            #groupVariableDecl
 	;
 
 picture
@@ -84,15 +84,14 @@ statement
 	|   evaluateStat
 	;
 
-/*todo: ughhhh*/
-statement2
-    :   statement
+statements
+    :   statement*
     ;
 
 ifStat
-    :   'IF' booleanExpression 'THEN' sentence #ifThenStat
-    |   'IF' booleanExpression 'THEN' statement* 'END-IF' #ifThenEndIfStat
-    |   'IF' booleanExpression 'THEN' statement* 'ELSE' statement2* 'END-IF' #ifElseStat
+    :   'IF' booleanExpression 'THEN' sentence                              #ifThenStat
+    |   'IF' booleanExpression 'THEN' statements 'END-IF'                   #ifThenEndIfStat
+    |   'IF' booleanExpression 'THEN' statements 'ELSE' statements 'END-IF' #ifElseStat
     ;
 
 stopRunStat
@@ -117,8 +116,8 @@ varOrNumber
     ;
 
 addStat
-	:	'ADD' varOrNumber 'TO' ID #addToStat
-	|	'ADD' varOrNumber+ 'GIVING' ID #addGivingStat
+	:	'ADD' varOrNumber 'TO' ID       #addToStat
+	|	'ADD' varOrNumber+ 'GIVING' ID  #addGivingStat
 	;
 
 subtractStat
