@@ -32,7 +32,7 @@ CobolTypes.Numeric.prototype.toCobolString = function(name, size) {
 
 CobolTypes.Numeric.prototype.generateSetterGuard = function(size) {
     let valueRef = new VariableRefExpr('value');
-    return new IfStatement(new BinaryOperatorCall('>', valueRef, new PrimitiveExpr(parseInt('9'.repeat(size)))), new ReturnStat());
+    return new IfStatement(new BinaryOperatorCall('>',  new MethodInvokeExpr(new TypeRefExpr(csRuntime.Math), 'Abs', [valueRef]), new PrimitiveExpr(parseInt('9'.repeat(size)))), new ReturnStat());
 };
 
 CobolTypes.Numeric.prototype.generateSetterTransformation = function(ref) {
