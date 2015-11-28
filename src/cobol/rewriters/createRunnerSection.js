@@ -28,6 +28,7 @@ module.exports = function(runnerSectionName, compilationUnit) {
         paragraphs = paragraphs.concat(compilationUnit.procedureDivision.freeParagraphs);
     }
     var runner = new nodes.Section('Runner', [], paragraphs);
+    runner.bindWithParent();
 
     compilationUnit.procedureDivision.freeSentences = [];
     compilationUnit.procedureDivision.freeParagraphs = [];

@@ -11,6 +11,7 @@ exports.appRequire = function(module) {
 exports.purge = function (element) {
     element.act(function() {
         delete this.toCSharp;
+        delete this._parent;
     });
     return element;
 };
