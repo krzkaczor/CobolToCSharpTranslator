@@ -7,6 +7,8 @@ var MethodInvokeExpr= require('../nodes/MethodInvokeExpression');
 var Stat = require('../nodes/Statement');
 var ThisRefExpr = new require('../nodes/ThisReferenceExpression');
 var TypeRefExpr = new require('../nodes/TypeReferenceExpression');
+var Runtime = require('../Runtime');
+var PrimitiveExpr = require('../nodes/PrimitiveExpression');
 var helper = require('../transformerHelper');
 
 /**
@@ -27,9 +29,7 @@ module.exports = function(compilationUnit) {
                     _.compact([
                         new Stat(new MethodInvokeExpr(new TypeRefExpr(member._parent), member.name)),
                         nextMethod? new Stat(new MethodInvokeExpr(new TypeRefExpr(nextMethod._parent), helper.translateMethodNameToCompanionMethodName(nextMethod.name))) : undefined
-                    ])
-                    ,
-                    true
+                    ]), true
                 );
 
                 companion._shadow = true; //won't be found by 'nextMethod' class
@@ -41,6 +41,11 @@ module.exports = function(compilationUnit) {
 
             cls.members = cls.members.concat(companionMethods);
         });
+
+    var lastMethod = _.last(_.last(compilationUnit.topLevelDeclarations).members);
+    if(lastMethod._shadow) {
+        lastMethod.stats.push(new Stat(new MethodInvokeExpr(new TypeRefExpr(Runtime.System.Environment), 'Exit', [new PrimitiveExpr(0)])));
+    }
 
     return compilationUnit;
 };
