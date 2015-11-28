@@ -7,9 +7,22 @@ module.exports = class PrimitiveExpression extends Base {
         this.primitive = primitive;
     }
 
+    limitTo(n : number) {
+        if (_.isNumber(this.primitive)) {
+            this.primitive = parseInt(this.primitive.toString().slice(-n));
+        } else {
+            this.primitive = this.primitive.toString().slice(-n);
+        }
+        return this;
+    }
+
     toSource() {
-        if (_.isString(this.primitive) || _.isBoolean(this.primitive)) {
+        if (_.isString(this.primitive)) {
             return `"${this.primitive}"`;
+        }
+
+        if (_.isBoolean(this.primitive)) {
+            return `${this.primitive}`;
         }
 
         if (_.isNumber(this.primitive)) {

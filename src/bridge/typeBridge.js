@@ -9,6 +9,7 @@ var AssignStat = require('../csharp/nodes/AssignStatement');
 var MethodInvokeExpr = require('../csharp/nodes/MethodInvokeExpression');
 var TypeRefExpr = require('../csharp/nodes/TypeReferenceExpression');
 var csRuntime = require('../csharp/Runtime');
+var CobolRuntime = require('./CobolRuntime').CobolRuntimeBindings.CobolRuntime;
 
 CobolTypes.Alphabetic.prototype.toCSharpType = function () {
     return 'string';
@@ -23,11 +24,11 @@ CobolTypes.Numeric.prototype.toCSharpType = function () {
 };
 
 CobolTypes.Alphabetic.prototype.toCobolString = CobolTypes.Alphanumeric.prototype.toCobolString = function(name, size) {
-    return new RawExpression(`${name}.ToCobolString(${size})`)
+    return new MethodInvokeExpr(new TypeRefExpr(CobolRuntime), 'ToCobolString', [name, new PrimitiveExpr(size)]);
 };
 
 CobolTypes.Numeric.prototype.toCobolString = function(name, size) {
-    return new RawExpression(`${name}.ToCobolString(${size}, ${this.signed})`)
+    return new MethodInvokeExpr(new TypeRefExpr(CobolRuntime), 'ToCobolString', [name, new PrimitiveExpr(size), new PrimitiveExpr(this.signed)]);
 };
 
 CobolTypes.Numeric.prototype.generateSetterGuard = function(size) {

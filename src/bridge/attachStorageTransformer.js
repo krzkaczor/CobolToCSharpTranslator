@@ -89,28 +89,45 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     );
 
     var setter;
+    var rawSetter, rawProp;
 
     let valueRef = new VariableRefExpr('value');
     let backingFieldRef = new VariableRefExpr(backingFieldName);
-    if (picture.type instanceof CobolTypes.Numeric) {
 
+    rawSetter = [
+        new AssignmentStat(backingFieldRef, valueRef)
+    ];
+    if (picture.type instanceof CobolTypes.Numeric) {
         setter = _.compact([
             picture.type.generateSetterGuard(picture.size),
             new AssignmentStat(backingFieldRef, valueRef),
             picture.type.generateSetterTransformation(backingFieldRef),
             ...conditionalNameItems.map(conditionalNameUpdate)
         ]);
+
+        rawSetter.push(...conditionalNameItems.map(conditionalNameUpdate));
     } else {
         setter = [
             new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef)
         ]
     }
 
-    return [
+    var property = new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, getter, setter).bindWithCounterpart(child);
+    rawProp = new csNodes.PropertyMember(name+'Raw', new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, undefined, rawSetter);
+    property._rawSetter = rawProp;
+
+
+    var stringProp = new csNodes.PropertyMember(name+'Str', new TypeRefExpr(csRuntime['string']), isStatic, [
+        new csNodes.ReturnStatement(picture.type.toCobolString(backingFieldRef, picture.size))
+    ]);
+
+    return _.compact([
         new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, init? init.toCSharp() : undefined, true).bindWithCounterpart(child),
-        new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, getter, setter).bindWithCounterpart(child),
+        property,
+        rawProp,
+        stringProp,
         ...conditionalNameItemsAttributes
-    ];
+    ]);
 }
 
 function translateChildren(classes, correspondingClass:csNodes.ClassDeclaration, children:Array, makeStatic: ?boolean = false, genToString: ?boolean = false, genLoader: ?boolean = false, genLoadFromKeyboardMethod: ?boolean = false) {
@@ -202,6 +219,15 @@ cobolNodes.GroupItem.prototype.toCSharpAssignment = function (what) {
     return new Stat(new MethodInvokeExpr(this._csharpRef, 'Load', [what.toCSharp()]));
 };
 
+cobolNodes.ElementaryItem.prototype.toCSharpRawAssignment = function (what) {
+    var rawSetter = new MemberAccessExpr(this._csharpRef.left, this._csharpRef.right + 'Raw');
+    return new AssignStat(rawSetter, what.toCSharp().limitTo(this.picture.size));
+};
+
+cobolNodes.GroupItem.prototype.toCSharpRawAssignment = function (what) {
+    return new Stat(new MethodInvokeExpr(this._csharpRef, 'Load', [what.toCSharp().limitTo(this.picture.size)]));
+};
+
 cobolNodes.ElementaryItem.prototype.toCSharpKeyboardLoader= function (what) {
     let expr = new MethodInvokeExpr(new TypeRefExpr(csRuntime.Console), 'ReadLine');
 
@@ -220,5 +246,6 @@ cobolNodes.GroupItem.prototype.toCSharpString = function () {
 };
 
 cobolNodes.ElementaryItem.prototype.toCSharpString = function () {
-    return this.picture.type.toCobolString(this._csharpRef.toSource(), this.picture.size);
+    var strGetter = new MemberAccessExpr(this._csharpRef.left, this._csharpRef.right + 'Str');
+    return strGetter;
 };

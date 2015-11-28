@@ -4,7 +4,7 @@ var ClassDeclaration = require('./ClassDeclaration');
 var TypeRefExpr = require('./TypeReferenceExpression');
 
 module.exports = class PropertyMember extends Base {
-    constructor(name: string, type: TypeRefExpr, isStatic: ?boolean = false, getter: Array<Base>, setter: Array<Base>) {
+    constructor(name: string, type: TypeRefExpr, isStatic: ?boolean = false, getter: ?Array<Base>, setter: ?Array<Base>) {
         super();
         this.name = name;
         this._type = type;
@@ -15,8 +15,8 @@ module.exports = class PropertyMember extends Base {
 
     toSource() {
         return `public ${this.isStatic?'static' : ''} ${this._type.toSource()} ${this.name} {
-            get { ${this.allToSource(this.getter).join('\n')} }
-            set { ${this.allToSource(this.setter).join('\n')} }
+            ${this.getter?`get { ${this.allToSource(this.getter).join('\n')}}`:`` }
+            ${this.setter?`set { ${this.allToSource(this.setter).join('\n')}}`:`` }
         }`;
     }
 };

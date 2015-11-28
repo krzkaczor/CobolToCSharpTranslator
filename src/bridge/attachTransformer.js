@@ -82,7 +82,7 @@ cobolNodes.IntLiteral.prototype.toCSharp = function () {
 };
 
 cobolNodes.MoveVerb.prototype.toCSharp = function () {
-    return this.target.toCSharpAssignment(this.what);
+    return this.target.toCSharpRawAssignment(this.what);
 };
 
 cobolNodes.AcceptVerb.prototype.toCSharp = function () {
