@@ -85,7 +85,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     ];
 
     var conditionalNameItemsAttributes = conditionalNameItems.map(cond =>
-        new csNodes.AttributeMember(cond.name, new TypeRefExpr(csRuntime['bool']), isStatic).bindWithCounterpart(cond)
+        new csNodes.AttributeMember(cond.name, new TypeRefExpr(csRuntime['bool']), isStatic, undefined).bindWithCounterpart(cond)
     );
 
     var setter;
@@ -107,7 +107,7 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     }
 
     return [
-        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, init? init.toCSharp() : undefined).bindWithCounterpart(child),
+        new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, init? init.toCSharp() : undefined, true).bindWithCounterpart(child),
         new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, getter, setter).bindWithCounterpart(child),
         ...conditionalNameItemsAttributes
     ];
