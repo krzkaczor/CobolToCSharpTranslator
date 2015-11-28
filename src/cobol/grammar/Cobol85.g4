@@ -155,8 +155,8 @@ performUntilStat
     ;
 
 displayStat
-	:	DISPLAY expr+ #advancingDisplayStat
-	|   DISPLAY expr+ WITH NO ADVANCING? #noAdvancingDisplayStat
+	:   DISPLAY expr+                      #advancingDisplayStat
+	|   DISPLAY expr+ WITH NO ADVANCING    #noAdvancingDisplayStat
 	;
 
 expr
