@@ -94,9 +94,6 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     let valueRef = new VariableRefExpr('value');
     let backingFieldRef = new VariableRefExpr(backingFieldName);
 
-    rawSetter = [
-        new AssignmentStat(backingFieldRef, valueRef)
-    ];
     if (picture.type instanceof CobolTypes.Numeric) {
         setter = _.compact([
             picture.type.generateSetterGuard(picture.size),
@@ -105,7 +102,6 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
             ...conditionalNameItems.map(conditionalNameUpdate)
         ]);
 
-        rawSetter.push(...conditionalNameItems.map(conditionalNameUpdate));
     } else {
         setter = [
             new AssignmentStat(new VariableRefExpr(backingFieldName), valueRef)
@@ -113,9 +109,6 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     }
 
     var property = new csNodes.PropertyMember(name, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, getter, setter).bindWithCounterpart(child);
-    rawProp = new csNodes.PropertyMember(name+'Raw', new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, undefined, rawSetter);
-    property._rawSetter = rawProp;
-
 
     var stringProp = new csNodes.PropertyMember(name+'Str', new TypeRefExpr(csRuntime['string']), isStatic, [
         new csNodes.ReturnStatement(picture.type.toCobolString(backingFieldRef, picture.size))
@@ -124,7 +117,6 @@ function generatePropertyForElementaryItem(name: string, picture: cobolNodes.Pic
     return _.compact([
         new csNodes.AttributeMember(backingFieldName, new TypeRefExpr(csRuntime[picture.type.toCSharpType()]), isStatic, init? init.toCSharp() : undefined, true).bindWithCounterpart(child),
         property,
-        rawProp,
         stringProp,
         ...conditionalNameItemsAttributes
     ]);
@@ -220,8 +212,7 @@ cobolNodes.GroupItem.prototype.toCSharpAssignment = function (what) {
 };
 
 cobolNodes.ElementaryItem.prototype.toCSharpRawAssignment = function (what) {
-    var rawSetter = new MemberAccessExpr(this._csharpRef.left, this._csharpRef.right + 'Raw');
-    return new AssignStat(rawSetter, what.toCSharp().limitTo(this.picture.size));
+    return new AssignStat(this._csharpRef, what.toCSharp().limitTo(this.picture.size));
 };
 
 cobolNodes.GroupItem.prototype.toCSharpRawAssignment = function (what) {
