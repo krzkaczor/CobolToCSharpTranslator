@@ -5,7 +5,7 @@ module.exports = class SubtractVerb extends Base {
     constructor(target: string, from: Base, value: Array<Base>) {
         super();
         this.targetName = target;
-        this.fromName = from;
+        this.from = from;
         this.components = value;
     }
 

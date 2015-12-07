@@ -1,0 +1,4 @@
+{
+  "should compute result": ["1", "100", "3", "99", "4", "50", "5", "10", "0"],
+  "should compute result of division": ["1", "100", "5", "3", "0"]
+}

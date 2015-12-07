@@ -126,7 +126,7 @@ cobolNodes.SubtractVerb.prototype.toCSharp = function() {
     let shortcut = csNodes.DecrementExpression;
     var targets = this.components.filter(comp => comp instanceof cobolNodes.Base).map(comp => comp.target);
 
-    if (targets.includes(this.from)) {
+    if (this.from.what === this.targetName) {
         let components = helper.allToCSharp(this.components.filter(comp => comp.target != this.target));
         if (shortcut && components.length == 1 && components[0].primitive === 1) {
             return new Stat(new shortcut(this.target._csharpRef));
